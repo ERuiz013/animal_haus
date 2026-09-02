@@ -16,7 +16,7 @@ require_once 'db.php';
 // Leer datos enviados en formato JSON
 $data = json_decode(file_get_contents("php://input"));
 
-if (!$data || !isset($data->email, $data->password, $data->nombre, $data->apellido, $data->telefono)) {
+if (!$data || !isset($data->email, $data->password, $data->nombre, $data->apellido, $data->telefono, $data->documento)) {
     http_response_code(400);
     echo json_encode(['error' => 'Datos incompletos. Por favor llene todos los campos requeridos.']);
     exit;
@@ -27,6 +27,7 @@ $password = $data->password;
 $nombre = htmlspecialchars(trim($data->nombre));
 $apellido = htmlspecialchars(trim($data->apellido));
 $telefono = htmlspecialchars(trim($data->telefono));
+$documento = htmlspecialchars(trim($data->documento));
 $rol = 2; // Rol 2 por defecto
 
 // Verificar si el correo ya está registrado
@@ -56,8 +57,8 @@ $password_hash = password_hash($password, PASSWORD_BCRYPT);
 $now = date('Y-m-d H:i:s');
 
 try {
-    $insertStmt = $pdo->prepare("INSERT INTO usuarios (uuid, email, password_hash, nombre, apellido, telefono, rol, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)");
-    $insertStmt->execute([$uuid, $email, $password_hash, $nombre, $apellido, $telefono, $rol, $now, $now]);
+    $insertStmt = $pdo->prepare("INSERT INTO usuarios (uuid, email, password_hash, nombre, apellido, telefono, documento, rol, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)");
+    $insertStmt->execute([$uuid, $email, $password_hash, $nombre, $apellido, $telefono, $documento, $rol, $now, $now]);
     
     http_response_code(201);
     echo json_encode([

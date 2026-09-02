@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Snackbar, IconButton, Tooltip, Chip, TablePagination } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import PeopleIcon from '@mui/icons-material/People'; // Icon for Clientes
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_BASE_URL } from '../config';
+
 
 export default function Clientes() {
     const [clientes, setClientes] = useState([]);
@@ -12,6 +15,9 @@ export default function Clientes() {
 
     // Modal state
     const [modalOpen, setModalOpen] = useState(false);
+    const [viewModalOpen, setViewModalOpen] = useState(false);
+    const [viewClienteData, setViewClienteData] = useState(null);
+    const [loadingView, setLoadingView] = useState(false);
     const [selectedCliente, setSelectedCliente] = useState(null);
     const [saving, setSaving] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -27,7 +33,7 @@ export default function Clientes() {
 
     const fetchClientes = () => {
         setLoading(true);
-        fetch('http://localhost/rjs_animal_haus/api/getClientes.php')
+        fetch(`${API_BASE_URL}/getClientes.php`)
             .then(res => {
                 if (!res.ok) throw new Error('Error al cargar los clientes');
                 return res.json();
@@ -46,6 +52,28 @@ export default function Clientes() {
     const handleRowClick = (cliente) => {
         setSelectedCliente({ ...cliente });
         setModalOpen(true);
+    };
+
+    const handleViewClick = (cliente) => {
+        setViewModalOpen(true);
+        setLoadingView(true);
+        setViewClienteData(null);
+        fetch(`${API_BASE_URL}/getClienteDetalle.php?id=${cliente.id}`)
+            .then(res => res.json())
+            .then(data => {
+                setLoadingView(false);
+                if (!data.error) {
+                    setViewClienteData(data);
+                } else {
+                    setSnackbar({ open: true, message: data.error, severity: 'error' });
+                    setViewModalOpen(false);
+                }
+            })
+            .catch(err => {
+                setLoadingView(false);
+                setSnackbar({ open: true, message: 'Error al cargar detalles', severity: 'error' });
+                setViewModalOpen(false);
+            });
     };
 
     const handleAddClick = () => {
@@ -80,8 +108,8 @@ export default function Clientes() {
         setSaving(true);
         const isNew = !selectedCliente.id;
         const endpoint = isNew
-            ? 'http://localhost/rjs_animal_haus/api/createCliente.php'
-            : 'http://localhost/rjs_animal_haus/api/updateCliente.php';
+            ? `${API_BASE_URL}/createCliente.php`
+            : `${API_BASE_URL}/updateCliente.php`;
 
         const payload = {
             nombre: selectedCliente.nombre,
@@ -121,7 +149,7 @@ export default function Clientes() {
 
     const handleConfirmAnular = () => {
         setSaving(true);
-        fetch('http://localhost/rjs_animal_haus/api/anularCliente.php', {
+        fetch(`${API_BASE_URL}/anularCliente.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -178,14 +206,15 @@ export default function Clientes() {
                     ) : error ? (
                         <Alert severity="error">{error}</Alert>
                     ) : (
-                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflow: 'hidden' }}>
-                            <Table>
+                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                                     <TableRow>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>ID</TableCell>
                                         <TableCell align="left" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Nombre Completo</TableCell>
                                         <TableCell align="left" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Correo Electrónico</TableCell>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Teléfono</TableCell>
+                                        <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Acciones</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -213,6 +242,18 @@ export default function Clientes() {
                                                     ) : (
                                                         <Typography variant="body2" color="text.disabled">No registrado</Typography>
                                                     )}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Tooltip title="Ver detalles">
+                                                        <IconButton color="primary" onClick={() => handleViewClick(cliente)} sx={{ backgroundColor: 'rgba(25, 118, 210, 0.04)', mr: 1 }}>
+                                                            <VisibilityIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Editar">
+                                                        <IconButton color="primary" onClick={() => handleRowClick(cliente)} sx={{ backgroundColor: 'rgba(25, 118, 210, 0.04)' }}>
+                                                            <EditIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 </TableCell>
                                             </TableRow>
                                         ))
@@ -243,14 +284,14 @@ export default function Clientes() {
                 maxWidth="sm"
                 PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
             >
-                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 800, backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 3 }}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
                     {selectedCliente?.id ? <EditIcon sx={{ color: '#c4a484' }} /> : <AddIcon sx={{ color: '#c4a484' }} />}
                     {selectedCliente?.id ? 'Editar Cliente' : 'Nuevo Cliente'}
                 </DialogTitle>
                 <DialogContent sx={{ backgroundColor: '#ffffff', p: 4, pt: '32px !important' }}>
                     {selectedCliente && (
                         <Box component="form" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
-                            <TextField
+                            <TextField size="small"
                                 label="Nombre"
                                 name="nombre"
                                 value={selectedCliente.nombre || ''}
@@ -261,7 +302,7 @@ export default function Clientes() {
                                 autoFocus
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Apellido"
                                 name="apellido"
                                 value={selectedCliente.apellido || ''}
@@ -271,7 +312,7 @@ export default function Clientes() {
                                 variant="outlined"
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Correo Electrónico"
                                 name="email"
                                 type="email"
@@ -283,7 +324,7 @@ export default function Clientes() {
                                 sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Teléfono"
                                 name="telefono"
                                 value={selectedCliente.telefono || ''}
@@ -296,24 +337,12 @@ export default function Clientes() {
                         </Box>
                     )}
                 </DialogContent>
-                <DialogActions sx={{ justifyContent: selectedCliente?.id ? 'space-between' : 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
-                    {selectedCliente?.id && (
-                        <Button
-                            onClick={handleAnularClick}
-                            color="error"
-                            variant="text"
-                            disabled={saving}
-                            startIcon={<DeleteIcon />}
-                            sx={{ fontWeight: 600, textTransform: 'none' }}
-                        >
-                            Eliminar
-                        </Button>
-                    )}
+                <DialogActions sx={{ justifyContent: 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
+                        <Button size="small" onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
                             Cancelar
                         </Button>
-                        <Button
+                        <Button size="small"
                             onClick={handleSave}
                             variant="contained"
                             disabled={saving}
@@ -322,6 +351,71 @@ export default function Clientes() {
                             {saving ? <CircularProgress size={24} color="inherit" /> : 'Guardar'}
                         </Button>
                     </Box>
+                </DialogActions>
+            </Dialog>
+
+            {/* Modal para ver detalles del cliente */}
+            <Dialog
+                open={viewModalOpen}
+                onClose={() => setViewModalOpen(false)}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
+            >
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
+                    <VisibilityIcon sx={{ color: '#c4a484' }} />
+                    Detalles del Cliente
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#ffffff', p: 4 }}>
+                    {loadingView ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>
+                    ) : viewClienteData ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight={600} textTransform="uppercase">Nombre Completo</Typography>
+                                <Typography variant="body1" fontWeight={600} color="#1e293b">{viewClienteData.nombre} {viewClienteData.apellido}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" fontWeight={600} textTransform="uppercase">Documento / C.I.</Typography>
+                                    <Typography variant="body1" color="#1e293b">{viewClienteData.documento || 'No registrado'}</Typography>
+                                </Box>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" fontWeight={600} textTransform="uppercase">Teléfono</Typography>
+                                    <Typography variant="body1" color="#1e293b">{viewClienteData.telefono || 'No registrado'}</Typography>
+                                </Box>
+                            </Box>
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight={600} textTransform="uppercase">Correo Electrónico</Typography>
+                                <Typography variant="body1" color="#1e293b">{viewClienteData.email}</Typography>
+                            </Box>
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight={600} textTransform="uppercase">Últimas Direcciones de Envío</Typography>
+                                <Paper variant="outlined" sx={{ p: 2, mt: 0.5, backgroundColor: '#f8fafc', borderColor: '#e2e8f0', borderRadius: 2 }}>
+                                    {viewClienteData.direcciones && viewClienteData.direcciones.length > 0 ? (
+                                        <ul style={{ margin: 0, paddingLeft: '20px', color: '#1e293b' }}>
+                                            {viewClienteData.direcciones.map((dir, idx) => (
+                                                <li key={idx} style={{ marginBottom: '8px' }}>
+                                                    <Typography variant="body2">{dir}</Typography>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <Typography variant="body1" color="text.disabled">
+                                            El cliente aún no ha registrado direcciones de envío en sus compras.
+                                        </Typography>
+                                    )}
+                                </Paper>
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Alert severity="error">No se pudo cargar la información del cliente.</Alert>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
+                    <Button size="small" onClick={() => setViewModalOpen(false)} variant="contained" sx={{ backgroundColor: '#c4a484', '&:hover': { backgroundColor: '#a88a6c' }, textTransform: 'none', fontWeight: 600, borderRadius: 2, px: 3 }}>
+                        Cerrar
+                    </Button>
                 </DialogActions>
             </Dialog>
 
@@ -342,10 +436,10 @@ export default function Clientes() {
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
+                    <Button size="small" onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
+                    <Button size="small" onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
                         {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, eliminar'}
                     </Button>
                 </DialogActions>
@@ -365,3 +459,5 @@ export default function Clientes() {
         </Box>
     );
 }
+
+

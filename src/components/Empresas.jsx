@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Snackbar, IconButton, Tooltip, Chip, TablePagination } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import BusinessIcon from '@mui/icons-material/Business'; // Icon for Empresa
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_BASE_URL } from '../config';
+
 
 export default function Empresas() {
     const [empresas, setEmpresas] = useState([]);
@@ -27,7 +29,7 @@ export default function Empresas() {
 
     const fetchEmpresas = () => {
         setLoading(true);
-        fetch('http://localhost/rjs_animal_haus/api/getEmpresas.php')
+        fetch(`${API_BASE_URL}/getEmpresas.php`)
             .then(res => {
                 if (!res.ok) throw new Error('Error al cargar las empresas');
                 return res.json();
@@ -94,8 +96,8 @@ export default function Empresas() {
         setSaving(true);
         const isNew = !selectedEmpresa.id;
         const endpoint = isNew
-            ? 'http://localhost/rjs_animal_haus/api/createEmpresa.php'
-            : 'http://localhost/rjs_animal_haus/api/updateEmpresa.php';
+            ? `${API_BASE_URL}/createEmpresa.php`
+            : `${API_BASE_URL}/updateEmpresa.php`;
 
         const payload = {
             nombre: selectedEmpresa.nombre,
@@ -144,7 +146,7 @@ export default function Empresas() {
 
     const handleConfirmAnular = () => {
         setSaving(true);
-        fetch('http://localhost/rjs_animal_haus/api/anularEmpresa.php', {
+        fetch(`${API_BASE_URL}/anularEmpresa.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -196,7 +198,7 @@ export default function Empresas() {
                             </Box>
                         </Box>
                         {empresas.length === 0 && (
-                            <Button
+                            <Button size="small"
                                 variant="contained"
                                 startIcon={<AddIcon />}
                                 onClick={handleAddClick}
@@ -211,8 +213,8 @@ export default function Empresas() {
                     ) : error ? (
                         <Alert severity="error">{error}</Alert>
                     ) : (
-                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflow: 'hidden' }}>
-                            <Table>
+                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                                     <TableRow>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>ID</TableCell>
@@ -281,14 +283,14 @@ export default function Empresas() {
                 maxWidth="sm"
                 PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
             >
-                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 800, backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 3 }}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
                     {selectedEmpresa?.id ? <EditIcon sx={{ color: '#c4a484' }} /> : <AddIcon sx={{ color: '#c4a484' }} />}
                     {selectedEmpresa?.id ? 'Editar Empresa' : 'Nueva Empresa'}
                 </DialogTitle>
                 <DialogContent sx={{ backgroundColor: '#ffffff', p: 4, pt: '32px !important' }}>
                     {selectedEmpresa && (
                         <Box component="form" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
-                            <TextField
+                            <TextField size="small"
                                 label="Razón Social / Nombre"
                                 name="nombre"
                                 value={selectedEmpresa.nombre || ''}
@@ -300,7 +302,7 @@ export default function Empresas() {
                                 sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="RUC / NIT"
                                 name="ruc"
                                 value={selectedEmpresa.ruc || ''}
@@ -311,7 +313,7 @@ export default function Empresas() {
                                 sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Dirección (Enlace o Iframe de Mapa)"
                                 name="direcion"
                                 value={selectedEmpresa.direcion || ''}
@@ -324,7 +326,7 @@ export default function Empresas() {
                                 sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Teléfono"
                                 name="telefono"
                                 value={selectedEmpresa.telefono || ''}
@@ -335,7 +337,7 @@ export default function Empresas() {
                                 sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Email"
                                 name="email"
                                 type="email"
@@ -349,7 +351,7 @@ export default function Empresas() {
 
                             <Typography variant="subtitle2" sx={{ gridColumn: { xs: '1fr', sm: 'span 2' }, mt: 1, color: '#475569', fontWeight: 700 }}>Horarios de Atención</Typography>
 
-                            <TextField
+                            <TextField size="small"
                                 label="Apertura (Entre Semana)"
                                 name="horario_abierto_entre_semana"
                                 type="time"
@@ -360,7 +362,7 @@ export default function Empresas() {
                                 disabled={saving}
                                 variant="outlined"
                             />
-                            <TextField
+                            <TextField size="small"
                                 label="Cierre (Entre Semana)"
                                 name="horario_cerrado_entre_semana"
                                 type="time"
@@ -371,7 +373,7 @@ export default function Empresas() {
                                 disabled={saving}
                                 variant="outlined"
                             />
-                            <TextField
+                            <TextField size="small"
                                 label="Apertura (Fin de Semana)"
                                 name="horario_abierto_fin_semana"
                                 type="time"
@@ -382,7 +384,7 @@ export default function Empresas() {
                                 disabled={saving}
                                 variant="outlined"
                             />
-                            <TextField
+                            <TextField size="small"
                                 label="Cierre (Fin de Semana)"
                                 name="horario_cerrado_fin_semana"
                                 type="time"
@@ -397,7 +399,7 @@ export default function Empresas() {
                             <Typography variant="subtitle2" sx={{ gridColumn: { xs: '1fr', sm: 'span 2' }, mt: 1, color: '#475569', fontWeight: 700 }}>Redes y Enlaces</Typography>
 
                             <Box sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}>
-                                <Button
+                                <Button size="small"
                                     variant="outlined"
                                     component="label"
                                     fullWidth
@@ -419,7 +421,7 @@ export default function Empresas() {
                                     </Box>
                                 )}
                             </Box>
-                            <TextField
+                            <TextField size="small"
                                 label="Link Facebook"
                                 name="link_facebook"
                                 value={selectedEmpresa.link_facebook || ''}
@@ -428,7 +430,7 @@ export default function Empresas() {
                                 disabled={saving}
                                 variant="outlined"
                             />
-                            <TextField
+                            <TextField size="small"
                                 label="Link Instagram"
                                 name="link_instagram"
                                 value={selectedEmpresa.link_instagram || ''}
@@ -437,7 +439,7 @@ export default function Empresas() {
                                 disabled={saving}
                                 variant="outlined"
                             />
-                            <TextField
+                            <TextField size="small"
                                 label="Link TikTok"
                                 name="link_tiktok"
                                 value={selectedEmpresa.link_tiktok || ''}
@@ -452,7 +454,7 @@ export default function Empresas() {
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: selectedEmpresa?.id ? 'space-between' : 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
                     {selectedEmpresa?.id && (
-                        <Button
+                        <Button size="small"
                             onClick={handleAnularClick}
                             color="error"
                             variant="text"
@@ -464,10 +466,10 @@ export default function Empresas() {
                         </Button>
                     )}
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
+                        <Button size="small" onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
                             Cancelar
                         </Button>
-                        <Button
+                        <Button size="small"
                             onClick={handleSave}
                             variant="contained"
                             disabled={saving}
@@ -496,10 +498,10 @@ export default function Empresas() {
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
+                    <Button size="small" onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
+                    <Button size="small" onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
                         {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, eliminar'}
                     </Button>
                 </DialogActions>
@@ -519,3 +521,5 @@ export default function Empresas() {
         </Box>
     );
 }
+
+

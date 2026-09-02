@@ -44,6 +44,8 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { useCart } from '../context/CartContext';
 import { useFavorite } from '../context/FavoriteContext';
+import { API_BASE_URL, IMAGE_BASE_URL } from '../config';
+
 
 const features = [
   {
@@ -120,8 +122,8 @@ const FadeInSection = ({ children, delay = 0 }) => {
 };
 
 const heroBackgrounds = [
-  '/farm_hero.png',
-  '/farm_hero_2.jpg'
+  import.meta.env.BASE_URL + 'img/farm_hero.png',
+  import.meta.env.BASE_URL + 'img/farm_hero_2.jpg'
 ];
 
 const getAnimalIcon = (animalName) => {
@@ -183,7 +185,7 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onClick, onAddToCa
       }}>
         <Box
           className="product-img" component="img"
-          src={product.imagen ? `http://localhost/rjs_animal_haus/${product.imagen}` : 'https://placehold.co/400x400/ffffff/94a3b8?text=Sin+Imagen'}
+          src={product.imagen ? `${IMAGE_BASE_URL}${ product.imagen }` : 'https://placehold.co/400x400/ffffff/94a3b8?text=Sin+Imagen'}
           alt={product.nombre}
           sx={{ maxWidth: '80%', maxHeight: '80%', objectFit: 'contain', transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
         />
@@ -191,7 +193,7 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onClick, onAddToCa
     </Box>
 
     <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: { xs: 1.5, sm: 3 }, pt: { xs: 1, sm: 2 } }}>
-      <Typography variant="subtitle1" fontWeight="700" sx={{ color: '#0f172a', lineHeight: 1.4, mb: { xs: 1, sm: 2 }, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: { xs: '2.4em', sm: '2.8em' }, fontSize: { xs: '0.85rem', sm: '1.05rem' } }}>
+      <Typography variant="subtitle1" fontWeight="700" sx={{ color: '#0f172a', lineHeight: 1.4, mb: { xs: 1, sm: 2 }, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '2.8em', fontSize: { xs: '0.85rem', sm: '1.05rem' } }}>
         {product.nombre}
       </Typography>
 
@@ -223,21 +225,48 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onClick, onAddToCa
   </Card>
 );
 
+// Patrón decorativo de patitas y regalos para el fondo del promo card
+const promoPatternSx = {
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cellipse cx='40' cy='50' rx='10' ry='13' fill='rgba(255,255,255,0.12)'/%3E%3Ccircle cx='24' cy='30' r='6' fill='rgba(255,255,255,0.12)'/%3E%3Ccircle cx='40' cy='26' r='6' fill='rgba(255,255,255,0.12)'/%3E%3Ccircle cx='54' cy='32' r='6' fill='rgba(255,255,255,0.12)'/%3E%3Crect x='130' y='30' width='28' height='22' rx='3' fill='rgba(255,255,255,0.12)'/%3E%3Crect x='130' y='24' width='28' height='9' rx='3' fill='rgba(255,255,255,0.12)'/%3E%3Crect x='141' y='24' width='5' height='28' fill='rgba(255,255,255,0.12)'/%3E%3Cellipse cx='150' cy='155' rx='9' ry='11' fill='rgba(255,255,255,0.12)' transform='rotate(15,150,155)'/%3E%3Ccircle cx='136' cy='138' r='5' fill='rgba(255,255,255,0.12)'/%3E%3Ccircle cx='150' cy='134' r='5' fill='rgba(255,255,255,0.12)'/%3E%3Ccircle cx='162' cy='140' r='5' fill='rgba(255,255,255,0.12)'/%3E%3Crect x='30' y='145' width='22' height='18' rx='2' fill='rgba(255,255,255,0.12)'/%3E%3Crect x='30' y='139' width='22' height='7' rx='2' fill='rgba(255,255,255,0.12)'/%3E%3Crect x='39' y='139' width='4' height='24' fill='rgba(255,255,255,0.12)'/%3E%3C/svg%3E")`,
+    backgroundSize: '200px 200px',
+    zIndex: 0,
+  }
+};
+
 const PromoCardContent = () => (
   <>
-    <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 160, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))', mb: -2, zIndex: 2, position: 'relative' }} />
-    <Box sx={{ textAlign: 'center', zIndex: 1, bgcolor: 'rgba(255,255,255,0.1)', p: 3, borderRadius: 3, backdropFilter: 'blur(10px)', width: '100%', border: '1px solid rgba(255,255,255,0.2)' }}>
-      <Chip icon={<LocalOfferIcon sx={{ color: '#b45309 !important' }} />} label="¡OFERTAS!" sx={{ bgcolor: '#ffffff', color: '#b45309', fontWeight: 900, mb: 2, px: 1 }} />
+    <Box component="img" src={import.meta.env.BASE_URL + "img/pollito2.png"} sx={{ width: '100%', maxWidth: 160, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))', mb: -2, zIndex: 2, position: 'relative' }} />
+    <Box sx={{ textAlign: 'center', zIndex: 1, bgcolor: 'rgba(255,250,240,0.90)', p: 3, borderRadius: 3, width: '100%', border: '2px solid rgba(255,255,255,0.7)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,1)' }}>
+      <Chip icon={<LocalOfferIcon sx={{ color: '#FFA000 !important' }} />} label="¡OFERTAS!" sx={{ bgcolor: '#ffffff', color: '#FFA000', fontWeight: 900, mb: 2, px: 1, borderRadius: '50px' }} />
       <br />
-      <Paper elevation={0} sx={{ display: 'inline-block', bgcolor: '#dc2626', p: 1.5, borderRadius: 2, mb: 2, transform: 'rotate(-2deg)' }}>
-        <Typography variant="h4" fontWeight="900" color="#ffffff" sx={{ textTransform: 'uppercase', lineHeight: 1, textShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
-          DESCUENTO
-        </Typography>
-      </Paper>
-      <Typography variant="h6" color="#fff" fontWeight="700" sx={{ mb: 3 }}>
-        ¡SUPER PRECIOS!
-      </Typography>
-      <Button variant="contained" sx={{ bgcolor: '#ffffff', color: '#b45309', '&:hover': { bgcolor: '#fef3c7' }, borderRadius: '50px', px: 4, py: 1, fontWeight: 900, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.5, mb: 2 }}>
+        <Typography sx={{ color: '#FFA000', fontSize: '1.4rem', lineHeight: 1 }}>✦</Typography>
+        <Paper elevation={0} sx={{ display: 'inline-block', bgcolor: '#f39a24ff', px: 2, py: 1.5, borderRadius: 2, transform: 'rotate(-1.5deg)', boxShadow: '0 6px 0 #d3682fff, 0 8px 12px rgba(0,0,0,0.15)' }}>
+          <Typography variant="h4" fontWeight="900" sx={{ color: '#ffffff', textTransform: 'uppercase', lineHeight: 1, letterSpacing: 1, textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+            DESCUENTO
+          </Typography>
+        </Paper>
+        <Typography sx={{ color: '#FFA000', fontSize: '1.4rem', lineHeight: 1 }}>✦</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 3 }}>
+        <Typography sx={{ color: '#FFA000', fontWeight: 900, fontSize: '1rem', lineHeight: 1 }}>›</Typography>
+        <Typography variant="h6" sx={{ color: '#5D4037', fontWeight: 800 }}>¡SUPER PRECIOS!</Typography>
+        <Typography sx={{ color: '#FFA000', fontWeight: 900, fontSize: '1rem', lineHeight: 1 }}>‹</Typography>
+      </Box>
+      <Button 
+        variant="contained" 
+        onClick={() => {
+          window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/descuentos`);
+          window.scrollTo(0, 0);
+          window.dispatchEvent(new Event('popstate'));
+        }}
+        sx={{ bgcolor: '#ffffff', color: '#E65100', '&:hover': { bgcolor: '#FFF8E1' }, borderRadius: '50px', px: 4, py: 1, fontWeight: 900, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', textTransform: 'uppercase', letterSpacing: 1 }}
+      >
         Ver Rebajas
       </Button>
     </Box>
@@ -278,7 +307,7 @@ const Inicio = () => {
     setLoadingAnimalProducts(true);
     setVisibleAnimalProducts(itemsPerPage);
 
-    fetch(`http://localhost/rjs_animal_haus/api/getProductos.php?animal_id=${animal.id}`)
+    fetch(`${API_BASE_URL}/getProductos.php?animal_id=${animal.id}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error && Array.isArray(data)) {
@@ -308,7 +337,7 @@ const Inicio = () => {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost/rjs_animal_haus/api/getDestacados.php')
+    fetch(`${API_BASE_URL}/getDestacados.php`)
       .then(res => res.json())
       .then(data => {
         if (!data.error && Array.isArray(data)) {
@@ -322,7 +351,7 @@ const Inicio = () => {
       })
       .finally(() => setLoadingProducts(false));
 
-    fetch('http://localhost/rjs_animal_haus/api/getEmpresas.php')
+    fetch(`${API_BASE_URL}/getEmpresas.php`)
       .then(res => res.json())
       .then(data => {
         if (!data.error && Array.isArray(data) && data.length > 0) {
@@ -332,7 +361,7 @@ const Inicio = () => {
       .catch(err => console.error("Error fetching empresa data:", err))
       .finally(() => setLoadingEmpresa(false));
 
-    fetch('http://localhost/rjs_animal_haus/api/getAnimales.php')
+    fetch(`${API_BASE_URL}/getAnimales.php`)
       .then(res => res.json())
       .then(data => {
         if (!data.error && Array.isArray(data)) {
@@ -348,6 +377,33 @@ const Inicio = () => {
       .catch(err => console.error("Error fetching animales:", err));
   }, []);
 
+  useEffect(() => {
+    const handleSelectAnimal = (e) => {
+      const animal = e.detail.animal;
+      setSelectedAnimal(animal);
+      setLoadingAnimalProducts(true);
+      setVisibleAnimalProducts(itemsPerPage);
+
+      fetch(`${API_BASE_URL}/getProductos.php?animal_id=${animal.id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error && Array.isArray(data)) {
+            setAnimalProducts(data);
+          } else {
+            setAnimalProducts([]);
+          }
+        })
+        .catch(err => {
+          console.error("Error fetching animal products:", err);
+          setAnimalProducts([]);
+        })
+        .finally(() => setLoadingAnimalProducts(false));
+    };
+
+    window.addEventListener('selectAnimal', handleSelectAnimal);
+    return () => window.removeEventListener('selectAnimal', handleSelectAnimal);
+  }, [itemsPerPage]);
+
   const handleAddToCart = (product) => {
     addToCart(product);
     setSnackbarMessage(`Agregaste ${product.nombre} al carrito`);
@@ -360,7 +416,7 @@ const Inicio = () => {
   };
 
   const handleProductClick = (id) => {
-    window.history.pushState({}, '', `/producto?id=${id}`);
+    window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/producto?id=${id}`);
     window.scrollTo(0, 0);
     window.dispatchEvent(new Event('popstate'));
   };
@@ -371,7 +427,10 @@ const Inicio = () => {
       backgroundColor: '#f3efe6', // Beige
       minHeight: '100vh',
       position: 'relative',
-      color: '#0f172a'
+      color: '#0f172a',
+      '& .MuiTypography-root, & .MuiButton-root, & .MuiChip-root, & .MuiLink-root, & .MuiTab-root': {
+        fontFamily: "'Nunito', sans-serif !important"
+      }
     }}>
       {/* Hero Section (Opción 1 - Glassmorphism) */}
       <Box sx={{
@@ -381,7 +440,7 @@ const Inicio = () => {
         {/* Imagen de fondo sutil */}
         <Box sx={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundImage: 'url("/pollito1.png")',
+          backgroundImage: `url("${import.meta.env.BASE_URL}img/pollito1.png")`,
           backgroundSize: 'contain', backgroundPosition: 'calc(100% - 50px) center', backgroundRepeat: 'no-repeat',
           '&::after': { content: '""', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.1) 100%)' }
         }} />
@@ -404,33 +463,34 @@ const Inicio = () => {
             <Grid item xs={12} md={4} sx={{ display: { xs: 'none', md: 'block' } }}>
               <Box sx={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4, pb: 3,
-                background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+                bgcolor: '#FFA23A',
                 borderRadius: '24px',
                 boxShadow: '0 20px 40px rgba(234, 88, 12, 0.25)',
                 width: '100%',
                 position: 'relative',
+                ...promoPatternSx,
                 // Transición por resoluciones para no tapar al pollito
-                transform: 'none',
-                transformOrigin: 'right center',
+                transform: 'scale(0.8)',
+                transformOrigin: 'left center',
                 transition: 'transform 0.2s ease-out',
-                '@media (max-width: 1950px)': { transform: 'scale(0.9) translateX(-50px)' },
-                '@media (max-width: 1920px)': { transform: 'scale(0.9) translateX(-60px)' },
-                '@media (max-width: 1900px)': { transform: 'scale(0.9) translateX(-80px)' },
-                '@media (max-width: 1850px)': { transform: 'scale(0.85) translateX(-110px)' },
-                '@media (max-width: 1820px)': { transform: 'scale(0.8) translateX(-130px)' },
-                '@media (max-width: 1800px)': { transform: 'scale(0.75) translateX(-150px)' },
-                '@media (max-width: 1750px)': { transform: 'scale(0.75) translateX(-170px)' },
-                '@media (max-width: 1700px)': { transform: 'scale(0.7) translateX(-200px)' },
-                '@media (max-width: 1650px)': { transform: 'scale(0.65) translateX(-250px)' },
-                '@media (max-width: 1600px)': { transform: 'scale(0.60) translateX(-300px)' },
-                '@media (max-width: 1550px)': { transform: 'scale(0.60) translateX(-280px)' },
-                '@media (max-width: 1500px)': { transform: 'scale(0.50) translateX(-400px)' },
-                '@media (max-width: 1450px)': { transform: 'scale(0.60) translateX(-240px)' },
-                '@media (max-width: 1400px)': { transform: 'scale(0.55) translateX(-260px)' },
-                '@media (max-width: 1350px)': { transform: 'scale(0.50) translateX(-280px)' },
-                '@media (max-width: 1300px)': { transform: 'scale(0.45) translateX(-300px)' },
-                '@media (max-width: 1250px)': { transform: 'scale(0.40) translateX(-320px)' },
-                '@media (max-width: 1100px)': { transform: 'scale(0.50) translateX(-280px)' }
+                '@media (max-width: 1950px)': { transform: 'scale(0.8)' },
+                '@media (max-width: 1920px)': { transform: 'scale(0.8)' },
+                '@media (max-width: 1900px)': { transform: 'scale(0.75)' },
+                '@media (max-width: 1850px)': { transform: 'scale(0.75)' },
+                '@media (max-width: 1820px)': { transform: 'scale(0.7)' },
+                '@media (max-width: 1800px)': { transform: 'scale(0.7)' },
+                '@media (max-width: 1750px)': { transform: 'scale(0.65)' },
+                '@media (max-width: 1700px)': { transform: 'scale(0.65)' },
+                '@media (max-width: 1650px)': { transform: 'scale(0.6)' },
+                '@media (max-width: 1600px)': { transform: 'scale(0.6)' },
+                '@media (max-width: 1550px)': { transform: 'scale(0.55)' },
+                '@media (max-width: 1500px)': { transform: 'scale(0.55)' },
+                '@media (max-width: 1450px)': { transform: 'scale(0.5)' },
+                '@media (max-width: 1400px)': { transform: 'scale(0.5)' },
+                '@media (max-width: 1350px)': { transform: 'scale(0.45)' },
+                '@media (max-width: 1300px)': { transform: 'scale(0.45)' },
+                '@media (max-width: 1250px)': { transform: 'scale(0.4)' },
+                '@media (max-width: 1100px)': { transform: 'scale(0.4)' }
               }}>
                 <PromoCardContent />
               </Box>
@@ -447,10 +507,10 @@ const Inicio = () => {
                 { icon: <SecurityIcon sx={{ fontSize: 32, color: '#f59e0b' }} />, title: 'Compra Segura', sub: 'Pagos protegidos' },
                 { icon: <SupportAgentIcon sx={{ fontSize: 32, color: '#f59e0b' }} />, title: 'Atención Personal', sub: 'Asesoría experta' },
               ].map((item, i) => (
-                <Grid item xs={12} sm={3} key={i}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: '#1e293b' }}>
+                <Grid item xs={6} sm={3} key={i}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b' }}>
                     {item.icon}
-                    <Box><Typography variant="subtitle2" fontWeight="800">{item.title}</Typography><Typography variant="caption" sx={{ color: '#64748b', fontWeight: 500 }}>{item.sub}</Typography></Box>
+                    <Box><Typography variant="subtitle2" fontWeight="800" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>{item.title}</Typography><Typography variant="caption" sx={{ color: '#64748b', fontWeight: 500, fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>{item.sub}</Typography></Box>
                   </Box>
                 </Grid>
               ))}
@@ -512,25 +572,28 @@ const Inicio = () => {
       </Container>
 
       {/* Promo Card Mobile (Ubicado fuera del Hero, encima de Categorías) */}
-      <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', width: '100%', position: 'relative', zIndex: 20 }}>
-        <Box sx={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4, pb: 3,
-          background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)',
-          borderRadius: 0,
-          boxShadow: '0 20px 40px rgba(234, 88, 12, 0.25)',
-          width: '100%',
-          position: 'relative'
-        }}>
-          <PromoCardContent />
+      <FadeInSection delay={0.1}>
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', width: '100%', position: 'relative', zIndex: 20 }}>
+          <Box sx={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4, pb: 3,
+            bgcolor: '#FFA23A',
+            borderRadius: 0,
+            boxShadow: '0 20px 40px rgba(249, 115, 22, 0.3)',
+            width: '100%',
+            position: 'relative',
+            ...promoPatternSx
+          }}>
+            <PromoCardContent />
+          </Box>
         </Box>
-      </Box>
+      </FadeInSection>
 
       {/* Main Content Background Wrapper */}
       <Box sx={{ bgcolor: 'transparent', pt: 0, pb: 12 }}>
         {/* Categorías Superpuestas (Opción 3 de TestHero) */}
         <FadeInSection delay={0.15}>
-          <Box sx={{ mb: 12, mt: 0 }}>
-            <Box sx={{ width: '100%', position: 'relative', pb: 10 }}>
+          <Box id="animales-section" sx={{ mb: 4, mt: 0, scrollMarginTop: '100px' }}>
+            <Box sx={{ width: '100%', position: 'relative', pb: 4 }}>
               <Box sx={{
                 overflow: 'hidden', position: 'relative', minHeight: 450, display: 'flex', flexDirection: 'column', pt: 6,
                 boxShadow: '0 20px 40px rgba(220, 38, 38, 0.15)', bgcolor: '#dc2626'
@@ -545,7 +608,7 @@ const Inicio = () => {
                     </Typography>
                   </Box>
                   <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-end', width: '100%' }}>
-                    <Box component="img" src="/pollito3.png" sx={{ width: '100%', maxWidth: { xs: 240, md: 360 }, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))', display: 'block' }} />
+                    <Box component="img" src={import.meta.env.BASE_URL + "img/pollito3.png"} sx={{ width: '100%', maxWidth: { xs: 240, md: 360 }, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))', display: 'block' }} />
                   </Box>
                 </Container>
               </Box>
@@ -737,7 +800,7 @@ const Inicio = () => {
                     ))
                   )}
                 </Box>
-                
+
                 {!loadingProducts && visibleFeaturedProducts < featuredProducts.length && (
                   <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
                     <Button

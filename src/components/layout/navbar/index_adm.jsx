@@ -36,7 +36,12 @@ import {
     ExpandLess,
     ExpandMore,
     KeyboardArrowDown as ArrowDownIcon,
-    Pets as PetsIcon
+    Pets as PetsIcon,
+    RequestQuote as RequestQuoteIcon,
+    Settings as SettingsIcon,
+    AdminPanelSettings as AdminPanelSettingsIcon,
+    VpnKey as VpnKeyIcon,
+    Assessment as AssessmentIcon
 } from '@mui/icons-material';
 import logo from '../../../assets/animalhause.png';
 import AuthModal from '../../AuthModal';
@@ -50,13 +55,17 @@ export default function NavbarAdmin() {
 
     // Desktop menus
     const [anchorElSeguridad, setAnchorElSeguridad] = useState(null);
+    const [anchorElConfiguracion, setAnchorElConfiguracion] = useState(null);
     const [anchorElStock, setAnchorElStock] = useState(null);
     const [anchorElVentas, setAnchorElVentas] = useState(null);
+    const [anchorElInformes, setAnchorElInformes] = useState(null);
 
     // Mobile collapses
     const [mobileOpenSeguridad, setMobileOpenSeguridad] = useState(false);
+    const [mobileOpenConfiguracion, setMobileOpenConfiguracion] = useState(false);
     const [mobileOpenStock, setMobileOpenStock] = useState(false);
     const [mobileOpenVentas, setMobileOpenVentas] = useState(false);
+    const [mobileOpenInformes, setMobileOpenInformes] = useState(false);
 
     // Cargar sesión persistente al iniciar
     useEffect(() => {
@@ -81,77 +90,62 @@ export default function NavbarAdmin() {
     const handleCloseUserMenu = () => setAnchorElUser(null);
     const handleDrawerToggle = () => setMobileOpen((prev) => !prev);
 
+    const toggleMobileMenu = (menuName) => {
+        setMobileOpenVentas(menuName === 'ventas' ? !mobileOpenVentas : false);
+        setMobileOpenStock(menuName === 'stock' ? !mobileOpenStock : false);
+        setMobileOpenSeguridad(menuName === 'seguridad' ? !mobileOpenSeguridad : false);
+        setMobileOpenConfiguracion(menuName === 'configuracion' ? !mobileOpenConfiguracion : false);
+        setMobileOpenInformes(menuName === 'informes' ? !mobileOpenInformes : false);
+    };
+
     const handleMenuClick = (setter) => (event) => setter(event.currentTarget);
     const handleMenuClose = (setter) => () => setter(null);
+
+    const handleNavigation = (e, path, setter = null) => {
+        e.preventDefault();
+        const fullPath = path.startsWith('/') ? `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}` : `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${path}`;
+        window.history.pushState({}, '', fullPath);
+        window.dispatchEvent(new Event('popstate'));
+        if (setter) {
+            setter(null);
+        } else if (mobileOpen) {
+            setMobileOpen(false);
+        }
+    };
 
     // Drawer para vista móvil
     const drawer = (
         <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box 
+                    sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+                    onClick={(e) => handleNavigation(e, '/')}
+                >
                     <img src={logo} alt="Animal Haus Admin" style={{ height: '35px', objectFit: 'contain' }} />
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: 'var(--text-h)', letterSpacing: '-0.5px' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#000000', letterSpacing: '-0.5px' }}>
                         Panel Admin
                     </Typography>
                 </Box>
-                <IconButton onClick={handleDrawerToggle}>
+                <IconButton onClick={handleDrawerToggle} sx={{ color: '#000000' }}>
                     <CloseIcon />
                 </IconButton>
             </Box>
-            <Divider />
+            <Divider sx={{ borderColor: '#e0e0e0' }} />
 
             {/* Menús móviles */}
-            <List sx={{ flexGrow: 1, textAlign: 'left' }}>
-
-                {/* Seguridad */}
-                <ListItem disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton onClick={() => setMobileOpenSeguridad(!mobileOpenSeguridad)}>
-                        <ListItemIcon sx={{ minWidth: 40 }}><SecurityIcon color="primary" /></ListItemIcon>
-                        <ListItemText primary="Seguridad" primaryTypographyProps={{ fontWeight: 600 }} />
-                        {mobileOpenSeguridad ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                </ListItem>
-                <Collapse in={mobileOpenSeguridad} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/empresa" onClick={handleDrawerToggle}>
-                            <ListItemIcon sx={{ minWidth: 32 }}><BusinessIcon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary="Empresa" />
-                        </ListItemButton>
-                    </List>
-                </Collapse>
-
-                {/* Stock */}
-                <ListItem disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton onClick={() => setMobileOpenStock(!mobileOpenStock)}>
-                        <ListItemIcon sx={{ minWidth: 40 }}><StorefrontIcon color="primary" /></ListItemIcon>
-                        <ListItemText primary="Stock" primaryTypographyProps={{ fontWeight: 600 }} />
-                        {mobileOpenStock ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                </ListItem>
-                <Collapse in={mobileOpenStock} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/unidad-medida" onClick={handleDrawerToggle}>
-                            <ListItemIcon sx={{ minWidth: 32 }}><ScaleIcon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary="Unidad de Medida" />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/categorias" onClick={handleDrawerToggle}>
-                            <ListItemIcon sx={{ minWidth: 32 }}><CategoryIcon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary="Categoria" />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/animales" onClick={handleDrawerToggle}>
-                            <ListItemIcon sx={{ minWidth: 32 }}><PetsIcon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary="Animales" />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/productos" onClick={handleDrawerToggle}>
-                            <ListItemIcon sx={{ minWidth: 32 }}><InventoryIcon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary="Productos" />
-                        </ListItemButton>
-                    </List>
-                </Collapse>
+            <List sx={{ 
+                flexGrow: 1, 
+                textAlign: 'left',
+                color: '#000000',
+                '& .MuiListItemText-primary': { color: '#000000' },
+                '& .MuiListItemIcon-root': { color: '#000000' },
+                '& .MuiSvgIcon-root:not(.MuiSvgIcon-colorPrimary)': { color: '#000000' },
+                '& .MuiSvgIcon-colorPrimary': { color: '#c4a484' }
+            }}>
 
                 {/* Ventas */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton onClick={() => setMobileOpenVentas(!mobileOpenVentas)}>
+                    <ListItemButton onClick={() => toggleMobileMenu('ventas')}>
                         <ListItemIcon sx={{ minWidth: 40 }}><PointOfSaleIcon color="primary" /></ListItemIcon>
                         <ListItemText primary="Ventas" primaryTypographyProps={{ fontWeight: 600 }} />
                         {mobileOpenVentas ? <ExpandLess /> : <ExpandMore />}
@@ -159,20 +153,124 @@ export default function NavbarAdmin() {
                 </ListItem>
                 <Collapse in={mobileOpenVentas} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/clientes" onClick={handleDrawerToggle}>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/ventas')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><PointOfSaleIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Ventas" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/clientes')}>
                             <ListItemIcon sx={{ minWidth: 32 }}><PeopleIcon fontSize="small" /></ListItemIcon>
                             <ListItemText primary="Clientes" />
                         </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }} component="a" href="/admin/pedidos" onClick={handleDrawerToggle}>
+                    </List>
+                </Collapse>
+
+                {/* Stock */}
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton onClick={() => toggleMobileMenu('stock')}>
+                        <ListItemIcon sx={{ minWidth: 40 }}><StorefrontIcon color="primary" /></ListItemIcon>
+                        <ListItemText primary="Stock" primaryTypographyProps={{ fontWeight: 600 }} />
+                        {mobileOpenStock ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                </ListItem>
+                <Collapse in={mobileOpenStock} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/unidad-medida')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><ScaleIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Unidad de Medida" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/categorias')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><CategoryIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Categorías" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/animales')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><PetsIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Animales" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/productos')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><InventoryIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Productos" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/ajustes-existencias')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><InventoryIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Ajustes Existencias" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
+
+                {/* Seguridad */}
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton onClick={() => toggleMobileMenu('seguridad')}>
+                        <ListItemIcon sx={{ minWidth: 40 }}><SecurityIcon color="primary" /></ListItemIcon>
+                        <ListItemText primary="Seguridad" primaryTypographyProps={{ fontWeight: 600 }} />
+                        {mobileOpenSeguridad ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                </ListItem>
+                <Collapse in={mobileOpenSeguridad} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/roles')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><AdminPanelSettingsIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Roles" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/permisos')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><VpnKeyIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Permisos" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
+
+                {/* Configuración */}
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton onClick={() => toggleMobileMenu('configuracion')}>
+                        <ListItemIcon sx={{ minWidth: 40 }}><SettingsIcon color="primary" /></ListItemIcon>
+                        <ListItemText primary="Configuración" primaryTypographyProps={{ fontWeight: 600 }} />
+                        {mobileOpenConfiguracion ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                </ListItem>
+                <Collapse in={mobileOpenConfiguracion} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/empresa')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><BusinessIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Empresa" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/timbrados')}>
                             <ListItemIcon sx={{ minWidth: 32 }}><ReceiptIcon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary="Pedidos" />
+                            <ListItemText primary="Timbrados" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/talonarios')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><ReceiptIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Talonarios" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/impuestos')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><RequestQuoteIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Impuestos" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
+
+                {/* Informes */}
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton onClick={() => toggleMobileMenu('informes')}>
+                        <ListItemIcon sx={{ minWidth: 40 }}><AssessmentIcon color="primary" /></ListItemIcon>
+                        <ListItemText primary="Informes" primaryTypographyProps={{ fontWeight: 600 }} />
+                        {mobileOpenInformes ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                </ListItem>
+                <Collapse in={mobileOpenInformes} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/informe-productos')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><InventoryIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Lista de Productos" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }} onClick={(e) => handleNavigation(e, '/admin/informe-productos-vendidos')}>
+                            <ListItemIcon sx={{ minWidth: 32 }}><PointOfSaleIcon fontSize="small" /></ListItemIcon>
+                            <ListItemText primary="Productos Vendidos" />
                         </ListItemButton>
                     </List>
                 </Collapse>
 
             </List>
 
-            <Divider />
+            <Divider sx={{ borderColor: '#e0e0e0' }} />
             {/* Acciones de usuario móviles */}
             <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {isLoggedIn ? (
@@ -185,7 +283,7 @@ export default function NavbarAdmin() {
                                 setChangePasswordOpen(true);
                                 if (mobileOpen) setMobileOpen(false);
                             }}
-                            sx={{ textTransform: 'none', borderRadius: '50px', borderColor: 'var(--border)', color: 'var(--text-h)' }}
+                            sx={{ textTransform: 'none', borderRadius: '50px', borderColor: '#e0e0e0', color: '#000000' }}
                         >
                             Perfil Admin
                         </Button>
@@ -196,9 +294,11 @@ export default function NavbarAdmin() {
                                 localStorage.removeItem('animal_haus_user');
                                 setUserData(null);
                                 setIsLoggedIn(false);
+                                window.history.pushState({}, '', '/');
+                                window.dispatchEvent(new PopStateEvent('popstate'));
                                 window.dispatchEvent(new Event('authChange'));
                             }}
-                            sx={{ textTransform: 'none', borderRadius: '50px', bgcolor: 'var(--accent)' }}
+                            sx={{ textTransform: 'none', borderRadius: '50px', bgcolor: '#c4a484', color: '#fff', '&:hover': { bgcolor: '#b39373' } }}
                         >
                             Cerrar Sesión
                         </Button>
@@ -209,7 +309,7 @@ export default function NavbarAdmin() {
                             variant="outlined"
                             fullWidth
                             onClick={() => handleOpenAuthModal('login')}
-                            sx={{ textTransform: 'none', borderRadius: '50px', borderColor: 'var(--border)', color: 'var(--text-h)' }}
+                            sx={{ textTransform: 'none', borderRadius: '50px', borderColor: '#e0e0e0', color: '#000000' }}
                         >
                             Iniciar Sesión
                         </Button>
@@ -217,7 +317,7 @@ export default function NavbarAdmin() {
                             variant="contained"
                             fullWidth
                             onClick={() => handleOpenAuthModal('register')}
-                            sx={{ textTransform: 'none', borderRadius: '50px', bgcolor: 'var(--accent)' }}
+                            sx={{ textTransform: 'none', borderRadius: '50px', bgcolor: '#c4a484', color: '#fff', '&:hover': { bgcolor: '#b39373' } }}
                         >
                             Registrarse
                         </Button>
@@ -244,9 +344,8 @@ export default function NavbarAdmin() {
                             <MenuIcon />
                         </IconButton>
                         <Box
-                            component="a"
-                            href="/admin"
-                            sx={{
+                            onClick={(e) => handleNavigation(e, '/admin')}
+                            sx={{ cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1.5,
@@ -278,24 +377,28 @@ export default function NavbarAdmin() {
                     {/* Menús Desplegables (Desktop) */}
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
 
-                        {/* Botón Seguridad */}
+                        {/* Botón Ventas */}
                         <Button
                             className="nav-link"
-                            onClick={handleMenuClick(setAnchorElSeguridad)}
+                            onClick={handleMenuClick(setAnchorElVentas)}
                             endIcon={<ArrowDownIcon />}
-                            startIcon={<SecurityIcon fontSize="small" />}
+                            startIcon={<PointOfSaleIcon fontSize="small" />}
                         >
-                            Seguridad
+                            Ventas
                         </Button>
                         <Menu
-                            anchorEl={anchorElSeguridad}
-                            open={Boolean(anchorElSeguridad)}
-                            onClose={handleMenuClose(setAnchorElSeguridad)}
+                            anchorEl={anchorElVentas}
+                            open={Boolean(anchorElVentas)}
+                            onClose={handleMenuClose(setAnchorElVentas)}
                             sx={{ '& .MuiPaper-root': { borderRadius: '12px', minWidth: '150px', mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' } }}
                         >
-                            <MenuItem component="a" href="/admin/empresa" onClick={handleMenuClose(setAnchorElSeguridad)}>
-                                <ListItemIcon><BusinessIcon fontSize="small" /></ListItemIcon>
-                                <ListItemText>Empresa</ListItemText>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/ventas', setAnchorElVentas)}>
+                                <ListItemIcon><PointOfSaleIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Ventas</ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/clientes', setAnchorElVentas)}>
+                                <ListItemIcon><PeopleIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Clientes</ListItemText>
                             </MenuItem>
                         </Menu>
 
@@ -314,46 +417,108 @@ export default function NavbarAdmin() {
                             onClose={handleMenuClose(setAnchorElStock)}
                             sx={{ '& .MuiPaper-root': { borderRadius: '12px', minWidth: '150px', mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' } }}
                         >
-                            <MenuItem component="a" href="/admin/unidad-medida" onClick={handleMenuClose(setAnchorElStock)}>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/unidad-medida', setAnchorElStock)}>
                                 <ListItemIcon><ScaleIcon fontSize="small" /></ListItemIcon>
                                 <ListItemText>Unidad de Medida</ListItemText>
                             </MenuItem>
-                            <MenuItem component="a" href="/admin/categorias" onClick={handleMenuClose(setAnchorElStock)}>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/categorias', setAnchorElStock)}>
                                 <ListItemIcon><CategoryIcon fontSize="small" /></ListItemIcon>
-                                <ListItemText>Categoria</ListItemText>
+                                <ListItemText>Categorías</ListItemText>
                             </MenuItem>
-                            <MenuItem component="a" href="/admin/animales" onClick={handleMenuClose(setAnchorElStock)}>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/animales', setAnchorElStock)}>
                                 <ListItemIcon><PetsIcon fontSize="small" /></ListItemIcon>
                                 <ListItemText>Animales</ListItemText>
                             </MenuItem>
-                            <MenuItem component="a" href="/admin/productos" onClick={handleMenuClose(setAnchorElStock)}>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/productos', setAnchorElStock)}>
                                 <ListItemIcon><InventoryIcon fontSize="small" /></ListItemIcon>
                                 <ListItemText>Productos</ListItemText>
                             </MenuItem>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/ajustes-existencias', setAnchorElStock)}>
+                                <ListItemIcon><InventoryIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Ajustes Existencias</ListItemText>
+                            </MenuItem>
                         </Menu>
 
-                        {/* Botón Ventas */}
+                        {/* Botón Seguridad */}
                         <Button
                             className="nav-link"
-                            onClick={handleMenuClick(setAnchorElVentas)}
+                            onClick={handleMenuClick(setAnchorElSeguridad)}
                             endIcon={<ArrowDownIcon />}
-                            startIcon={<PointOfSaleIcon fontSize="small" />}
+                            startIcon={<SecurityIcon fontSize="small" />}
                         >
-                            Ventas
+                            Seguridad
                         </Button>
                         <Menu
-                            anchorEl={anchorElVentas}
-                            open={Boolean(anchorElVentas)}
-                            onClose={handleMenuClose(setAnchorElVentas)}
+                            anchorEl={anchorElSeguridad}
+                            open={Boolean(anchorElSeguridad)}
+                            onClose={handleMenuClose(setAnchorElSeguridad)}
                             sx={{ '& .MuiPaper-root': { borderRadius: '12px', minWidth: '150px', mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' } }}
                         >
-                            <MenuItem component="a" href="/admin/clientes" onClick={handleMenuClose(setAnchorElVentas)}>
-                                <ListItemIcon><PeopleIcon fontSize="small" /></ListItemIcon>
-                                <ListItemText>Clientes</ListItemText>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/roles', setAnchorElSeguridad)}>
+                                <ListItemIcon><AdminPanelSettingsIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Roles</ListItemText>
                             </MenuItem>
-                            <MenuItem component="a" href="/admin/pedidos" onClick={handleMenuClose(setAnchorElVentas)}>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/permisos', setAnchorElSeguridad)}>
+                                <ListItemIcon><VpnKeyIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Permisos</ListItemText>
+                            </MenuItem>
+                        </Menu>
+
+                        {/* Botón Configuración */}
+                        <Button
+                            className="nav-link"
+                            onClick={handleMenuClick(setAnchorElConfiguracion)}
+                            endIcon={<ArrowDownIcon />}
+                            startIcon={<SettingsIcon fontSize="small" />}
+                        >
+                            Configuración
+                        </Button>
+                        <Menu
+                            anchorEl={anchorElConfiguracion}
+                            open={Boolean(anchorElConfiguracion)}
+                            onClose={handleMenuClose(setAnchorElConfiguracion)}
+                            sx={{ '& .MuiPaper-root': { borderRadius: '12px', minWidth: '150px', mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' } }}
+                        >
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/empresa', setAnchorElConfiguracion)}>
+                                <ListItemIcon><BusinessIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Empresa</ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/timbrados', setAnchorElConfiguracion)}>
                                 <ListItemIcon><ReceiptIcon fontSize="small" /></ListItemIcon>
-                                <ListItemText>Pedidos</ListItemText>
+                                <ListItemText>Timbrados</ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/talonarios', setAnchorElConfiguracion)}>
+                                <ListItemIcon><ReceiptIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Talonarios</ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/impuestos', setAnchorElConfiguracion)}>
+                                <ListItemIcon><RequestQuoteIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Impuestos</ListItemText>
+                            </MenuItem>
+                        </Menu>
+
+                        {/* Botón Informes */}
+                        <Button
+                            className="nav-link"
+                            onClick={handleMenuClick(setAnchorElInformes)}
+                            endIcon={<ArrowDownIcon />}
+                            startIcon={<AssessmentIcon fontSize="small" />}
+                        >
+                            Informes
+                        </Button>
+                        <Menu
+                            anchorEl={anchorElInformes}
+                            open={Boolean(anchorElInformes)}
+                            onClose={handleMenuClose(setAnchorElInformes)}
+                            sx={{ '& .MuiPaper-root': { borderRadius: '12px', minWidth: '150px', mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' } }}
+                        >
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/informe-productos', setAnchorElInformes)}>
+                                <ListItemIcon><InventoryIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Lista de Productos</ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={(e) => handleNavigation(e, '/admin/informe-productos-vendidos', setAnchorElInformes)}>
+                                <ListItemIcon><PointOfSaleIcon fontSize="small" /></ListItemIcon>
+                                <ListItemText>Productos Vendidos</ListItemText>
                             </MenuItem>
                         </Menu>
 
@@ -444,6 +609,8 @@ export default function NavbarAdmin() {
                                             localStorage.removeItem('animal_haus_user');
                                             setUserData(null);
                                             setIsLoggedIn(false);
+                                            window.history.pushState({}, '', '/');
+                                            window.dispatchEvent(new PopStateEvent('popstate'));
                                             window.dispatchEvent(new Event('authChange'));
                                         }} sx={{ py: 1, gap: 1.5, '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)', color: '#d32f2f' } }}>
                                             <LogoutIcon fontSize="small" />
@@ -485,9 +652,9 @@ export default function NavbarAdmin() {
                     '& .MuiDrawer-paper': {
                         boxSizing: 'border-box',
                         width: 280,
-                        bgcolor: 'var(--bg)',
+                        bgcolor: '#ffffff',
                         backgroundImage: 'none',
-                        borderRight: '1px solid var(--border)'
+                        borderRight: '1px solid #e0e0e0'
                     },
                 }}
             >
@@ -503,6 +670,10 @@ export default function NavbarAdmin() {
                     setUserData(user);
                     setIsLoggedIn(true);
                     setAuthModalOpen(false);
+                    if (String(user.rol) === '1' || String(user.id_rol) === '1') {
+                        window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/admin/ventas`);
+                        window.dispatchEvent(new Event('popstate'));
+                    }
                     window.dispatchEvent(new Event('authChange'));
                 }}
             />

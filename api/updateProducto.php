@@ -21,6 +21,7 @@ $id = $_POST['id'];
 $categoria_id = $_POST['categoria_id'] ?? null;
 $animal_id = $_POST['animal_id'] ?? null;
 $uni_med_id = $_POST['uni_med_id'] ?? null;
+$impuesto_id = $_POST['impuesto_id'] ?? null;
 $sku = $_POST['sku'] ?? null;
 $nombre = $_POST['nombre'] ?? null;
 $detalle = $_POST['detalle'] ?? null;
@@ -82,11 +83,11 @@ if (isset($_FILES['imagen'])) {
 
 try {
     if ($updateImage) {
-        $stmt = $pdo->prepare("UPDATE productos SET categoria_id = ?, animal_id = ?, uni_med_id = ?, sku = ?, nombre = ?, slug = ?, precio = ?, stock = ?, imagen = ?, detalle = ?, tipo_precio = ? WHERE id = ?");
-        $stmt->execute([$categoria_id, $animal_id, $uni_med_id, $sku, $nombre, $slug, $precio, $stock, $imagen, $detalle, $tipo_precio, $id]);
+        $stmt = $pdo->prepare("UPDATE productos SET categoria_id = ?, animal_id = ?, uni_med_id = ?, impuesto_id = ?, sku = ?, nombre = ?, slug = ?, precio = ?, imagen = ?, detalle = ?, tipo_precio = ? WHERE id = ?");
+        $stmt->execute([$categoria_id, $animal_id, $uni_med_id, $impuesto_id, $sku, $nombre, $slug, $precio, $imagen, $detalle, $tipo_precio, $id]);
     } else {
-        $stmt = $pdo->prepare("UPDATE productos SET categoria_id = ?, animal_id = ?, uni_med_id = ?, sku = ?, nombre = ?, slug = ?, precio = ?, stock = ?, detalle = ?, tipo_precio = ? WHERE id = ?");
-        $stmt->execute([$categoria_id, $animal_id, $uni_med_id, $sku, $nombre, $slug, $precio, $stock, $detalle, $tipo_precio, $id]);
+        $stmt = $pdo->prepare("UPDATE productos SET categoria_id = ?, animal_id = ?, uni_med_id = ?, impuesto_id = ?, sku = ?, nombre = ?, slug = ?, precio = ?, detalle = ?, tipo_precio = ? WHERE id = ?");
+        $stmt->execute([$categoria_id, $animal_id, $uni_med_id, $impuesto_id, $sku, $nombre, $slug, $precio, $detalle, $tipo_precio, $id]);
     }
 
     echo json_encode(['message' => 'Producto actualizado correctamente']);

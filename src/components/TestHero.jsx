@@ -32,7 +32,7 @@ export default function TestHero() {
           {/* Imagen de fondo sutil */}
           <Box sx={{ 
               position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-              backgroundImage: 'url("/pollito1.png")',
+              backgroundImage: 'url("/img/pollito1.png")',
               backgroundSize: 'contain', backgroundPosition: 'calc(100% - 50px) center', backgroundRepeat: 'no-repeat',
               '&::after': { content: '""', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.1) 100%)' }
           }} />
@@ -96,7 +96,7 @@ export default function TestHero() {
             maxWidth: 800, width: '90%', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(250, 204, 21, 0.4)'
           }}>
             {/* AQUÍ ESTÁ EL POLLITO 3 */}
-            <Box component="img" src="/pollito3.png" sx={{ height: 160, mb: 3, filter: 'drop-shadow(0 15px 20px rgba(0,0,0,0.15))', transform: 'scale(1.1)' }} />
+            <Box component="img" src="/img/pollito3.png" sx={{ height: 160, mb: 3, filter: 'drop-shadow(0 15px 20px rgba(0,0,0,0.15))', transform: 'scale(1.1)' }} />
             
             <Typography variant="h2" fontWeight="900" sx={{ color: '#1e293b', mb: 2 }}>
               ¿Qué está buscando tu <span style={{ color: '#dc2626' }}>mejor amigo?</span>
@@ -139,7 +139,7 @@ export default function TestHero() {
                 </Typography>
               </Box>
               <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
-                <Box component="img" src="/pollito3.png" sx={{ width: '100%', maxWidth: 360, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))', display: 'block' }} />
+                <Box component="img" src="/img/pollito3.png" sx={{ width: '100%', maxWidth: 360, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))', display: 'block' }} />
               </Box>
             </Container>
           </Box>
@@ -182,7 +182,7 @@ export default function TestHero() {
               <Grid container alignItems="center">
                 <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
                   {/* El pollito 2 (corazón o similar) a la izquierda */}
-                  <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))', mt: { md: 6 } }} />
+                  <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))', mt: { md: 6 } }} />
                 </Grid>
                 <Grid item xs={12} md={7} sx={{ py: 6, pl: { md: 2 }, textAlign: { xs: 'center', md: 'left' } }}>
                   <Chip icon={<LocalOffer />} label="¡OFERTAS QUE ENAMORAN!" sx={{ bgcolor: '#ffffff', color: '#ea580c', fontWeight: 900, mb: 2, px: 2, fontSize: '1.1rem', py: 2.5, borderRadius: '8px' }} />
@@ -214,7 +214,7 @@ export default function TestHero() {
             <Grid container>
               <Grid item xs={12} md={5} sx={{ bgcolor: '#fffbf2', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', pt: 4, position: 'relative', borderRight: '2px dashed #fde047' }}>
                 {/* Pollito 2 */}
-                <Box component="img" src="/pollito2.png" sx={{ width: '90%', maxWidth: 300, filter: 'drop-shadow(0 15px 20px rgba(0,0,0,0.15))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '90%', maxWidth: 300, filter: 'drop-shadow(0 15px 20px rgba(0,0,0,0.15))' }} />
               </Grid>
               <Grid item xs={12} md={7} sx={{ p: { xs: 4, md: 8 }, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
@@ -272,7 +272,7 @@ export default function TestHero() {
                   <Typography variant="caption" fontWeight="700">HOY</Typography>
                 </Box>
                 {/* Pollito 2 */}
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.2))', zIndex: 1 }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.2))', zIndex: 1 }} />
               </Grid>
             </Grid>
           </Box>
@@ -301,7 +301,7 @@ export default function TestHero() {
                 <Box sx={{ position: 'absolute', right: '10%', top: '10%', width: 90, height: 90, bgcolor: '#f59e0b', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'rotate(15deg)', boxShadow: '0 10px 20px rgba(245,158,11,0.4)', zIndex: 2 }}>
                   <Typography variant="h5" fontWeight="900" color="#000">-50%</Typography>
                 </Box>
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 320, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.6))', zIndex: 1 }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 320, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.6))', zIndex: 1 }} />
               </Grid>
             </Grid>
           </Box>
@@ -322,7 +322,7 @@ export default function TestHero() {
               <Paper elevation={4} sx={{ position: 'absolute', left: { md: '-40px' }, top: '20%', p: 2, borderRadius: 3, bgcolor: '#fff', zIndex: 2, transform: 'rotate(-5deg)' }}>
                 <Typography fontWeight="900" color="#dc2626" variant="h6">¡Lleva 3 Paga 2!</Typography>
               </Paper>
-              <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 300, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))' }} />
+              <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 300, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))' }} />
             </Box>
           </Box>
         </Box>
@@ -334,7 +334,7 @@ export default function TestHero() {
             <Typography variant="h1" sx={{ position: 'absolute', top: -20, left: -20, fontSize: '12rem', fontWeight: 900, color: 'rgba(255,255,255,0.1)', userSelect: 'none' }}>SALE</Typography>
             <Grid container spacing={4} alignItems="center" position="relative" zIndex={1}>
               <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 340, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 340, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))' }} />
               </Grid>
               <Grid item xs={12} md={7} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
                 <Typography variant="h2" color="#fff" fontWeight="900" sx={{ mb: 2, textTransform: 'uppercase' }}>Descuentos<br/>Bestiales</Typography>
@@ -349,7 +349,7 @@ export default function TestHero() {
         <Box sx={{ mb: 8 }}>
           <Typography variant="subtitle1" fontWeight="700" color="#475569" sx={{ mb: 2 }}>Ejemplo 4: Floating Glassmorphism</Typography>
           <Box sx={{ maxWidth: 1400, mx: 'auto', borderRadius: 4, bgcolor: '#fef08a', position: 'relative', p: { xs: 4, md: 8 }, overflow: 'hidden', minHeight: 450, display: 'flex', alignItems: 'center' }}>
-            <Box component="img" src="/pollito2.png" sx={{ position: 'absolute', right: '5%', bottom: '-10%', width: '50%', maxWidth: 400, opacity: 0.9 }} />
+            <Box component="img" src="/img/pollito2.png" sx={{ position: 'absolute', right: '5%', bottom: '-10%', width: '50%', maxWidth: 400, opacity: 0.9 }} />
             <Box sx={{ position: 'relative', zIndex: 2, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(16px)', p: { xs: 4, md: 6 }, borderRadius: 4, maxWidth: 600, border: '1px solid rgba(255,255,255,0.5)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
               <Chip label="NUEVO" sx={{ bgcolor: '#ea580c', color: '#fff', fontWeight: 800, mb: 2 }} />
               <Typography variant="h3" color="#1e293b" fontWeight="900" sx={{ mb: 2 }}>Precios que dan ganas de saltar.</Typography>
@@ -368,7 +368,7 @@ export default function TestHero() {
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 6 }}>
                <Button variant="contained" sx={{ bgcolor: '#ea580c', color: '#fff', px: 4, py: 1.5, borderRadius: 2, fontWeight: 700 }}>Comprar</Button>
             </Box>
-            <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 350, mx: 'auto', display: 'block', mb: -4, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.2))' }} />
+            <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 350, mx: 'auto', display: 'block', mb: -4, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.2))' }} />
           </Box>
         </Box>
 
@@ -384,7 +384,7 @@ export default function TestHero() {
                 <Box><Button variant="contained" sx={{ bgcolor: '#fff', color: '#dc2626', borderRadius: '50px', px: 4, fontWeight: 800 }}>Aprovechar 50%</Button></Box>
               </Grid>
               <Grid item xs={12} md={5} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 4 }}>
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 280, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 280, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }} />
               </Grid>
             </Grid>
           </Box>
@@ -397,7 +397,7 @@ export default function TestHero() {
             <Grid container spacing={4} alignItems="center">
               <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
                 <Box sx={{ position: 'absolute', width: '100%', height: '100%', background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)', zIndex: 0 }} />
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 300, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 300, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))' }} />
               </Grid>
               <Grid item xs={12} md={7} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                 <Typography variant="h2" color="#fff" fontWeight="900" sx={{ mb: 2, letterSpacing: '-1px' }}>Días de Locura</Typography>
@@ -425,7 +425,7 @@ export default function TestHero() {
                   <Button variant="outlined" sx={{ color: '#ea580c', borderColor: '#ea580c', borderWidth: 2, borderRadius: 8, px: 4, fontWeight: 700 }}>Ver Selección</Button>
                 </Grid>
                 <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 200 }} />
+                  <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 200 }} />
                 </Grid>
               </Grid>
             </Box>
@@ -447,7 +447,7 @@ export default function TestHero() {
                 <Button variant="contained" sx={{ bgcolor: '#1e293b', color: '#fff', px: 5, py: 1.5, borderRadius: 2, fontWeight: 700 }}>Aplicar Promos</Button>
               </Grid>
               <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 320, filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.1))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 320, filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.1))' }} />
               </Grid>
             </Grid>
           </Box>
@@ -462,7 +462,7 @@ export default function TestHero() {
             
             <Grid container spacing={4} alignItems="center" position="relative" zIndex={1}>
               <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', order: { xs: 2, md: 1 } }}>
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 300, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.8))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 300, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.8))' }} />
               </Grid>
               <Grid item xs={12} md={6} sx={{ textAlign: { xs: 'center', md: 'left' }, order: { xs: 1, md: 2 } }}>
                 <Typography variant="overline" sx={{ color: '#fcd34d', letterSpacing: 3, fontWeight: 700, fontSize: '1rem' }}>EDICIÓN LIMITADA</Typography>
@@ -488,7 +488,7 @@ export default function TestHero() {
             <Typography variant="h1" sx={{ position: 'absolute', bottom: -40, left: 20, fontSize: '14rem', fontWeight: 900, color: 'rgba(255,255,255,0.02)', userSelect: 'none', lineHeight: 1 }}>SALE</Typography>
             <Grid container spacing={4} alignItems="center" position="relative" zIndex={1}>
               <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(245,158,11,0.2))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(245,158,11,0.2))' }} />
               </Grid>
               <Grid item xs={12} md={7} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                 <Typography variant="overline" sx={{ color: '#f59e0b', letterSpacing: 3, fontWeight: 800, fontSize: '1rem' }}>SÓLO POR HOY</Typography>
@@ -509,7 +509,7 @@ export default function TestHero() {
               <Typography variant="h6" color="#94a3b8" sx={{ mb: 4 }}>Ofertas increíbles que brillan en la oscuridad.</Typography>
             </Box>
             <Box sx={{ flex: 1, background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', p: { xs: 4, md: 8 }, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
-              <Box component="img" src="/pollito2.png" sx={{ position: { md: 'absolute' }, left: { md: '-150px' }, width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))' }} />
+              <Box component="img" src="/img/pollito2.png" sx={{ position: { md: 'absolute' }, left: { md: '-150px' }, width: '100%', maxWidth: 350, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.4))' }} />
               <Box sx={{ position: 'absolute', top: 20, right: 20, bgcolor: '#ffffff', color: '#ea580c', fontWeight: 900, px: 2, py: 1, borderRadius: 2 }}>-30%</Box>
             </Box>
           </Box>
@@ -531,7 +531,7 @@ export default function TestHero() {
               </Grid>
               <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
                 <Box sx={{ position: 'absolute', width: 250, height: 250, background: 'radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%)', zIndex: 0 }} />
-                <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 280, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }} />
+                <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 280, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }} />
               </Grid>
             </Grid>
           </Box>
@@ -541,7 +541,7 @@ export default function TestHero() {
         <Box sx={{ mb: 8 }}>
           <Typography variant="subtitle1" fontWeight="700" color="#475569" sx={{ mb: 2 }}>Ejemplo 14: Orange Canvas + Dark Glass</Typography>
           <Box sx={{ maxWidth: 1400, mx: 'auto', borderRadius: 4, background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', p: { xs: 4, md: 8 }, display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
-            <Box component="img" src="/pollito2.png" sx={{ position: 'absolute', right: '5%', bottom: '-10%', width: '50%', maxWidth: 450, opacity: 0.9, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))' }} />
+            <Box component="img" src="/img/pollito2.png" sx={{ position: 'absolute', right: '5%', bottom: '-10%', width: '50%', maxWidth: 450, opacity: 0.9, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))' }} />
             <Box sx={{ position: 'relative', zIndex: 2, background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(20px)', p: { xs: 4, md: 6 }, borderRadius: 4, maxWidth: 650, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
               <Chip label="EXCLUSIVO VIP" sx={{ bgcolor: '#f59e0b', color: '#000', fontWeight: 900, mb: 3 }} />
               <Typography variant="h2" color="#fff" fontWeight="900" sx={{ mb: 2 }}>Poder <span style={{ color: '#f59e0b' }}>Naranja</span></Typography>
@@ -555,7 +555,7 @@ export default function TestHero() {
         <Box sx={{ mb: 8 }}>
           <Typography variant="subtitle1" fontWeight="700" color="#475569" sx={{ mb: 2 }}>Ejemplo 15: Intense Radial Focus</Typography>
           <Box sx={{ maxWidth: 1400, mx: 'auto', borderRadius: 4, background: 'radial-gradient(circle at center, #7c2d12 0%, #0f172a 100%)', p: { xs: 4, md: 8 }, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden', border: '1px solid #450a0a' }}>
-            <Box component="img" src="/pollito2.png" sx={{ width: '100%', maxWidth: 220, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.8))', mb: 3, position: 'relative', zIndex: 2 }} />
+            <Box component="img" src="/img/pollito2.png" sx={{ width: '100%', maxWidth: 220, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.8))', mb: 3, position: 'relative', zIndex: 2 }} />
             <Box sx={{ position: 'relative', zIndex: 2 }}>
               <Typography variant="h2" color="#fff" fontWeight="900" sx={{ mb: 2 }}>Foco en tu <span style={{ color: '#f97316' }}>Mascota</span></Typography>
               <Typography variant="h6" color="#94a3b8" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>Ellos son el centro de atención. Por eso, hemos bajado nuestros precios hasta un 40% este fin de semana.</Typography>

@@ -4,7 +4,8 @@ import os from 'node:os'
 import path from 'node:path'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
+  base: '/',
   cacheDir: path.join(os.homedir(), '.vite-cache', 'rjs_animal_haus'),
-})
+}))

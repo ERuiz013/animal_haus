@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Snackbar, IconButton, Tooltip, TablePagination } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PetsIcon from '@mui/icons-material/Pets';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_BASE_URL } from '../config';
+
 
 export default function Animales() {
     const [animales, setAnimales] = useState([]);
@@ -27,7 +29,7 @@ export default function Animales() {
 
     const fetchAnimales = () => {
         setLoading(true);
-        fetch('http://localhost/rjs_animal_haus/api/getAnimales.php')
+        fetch(`${API_BASE_URL}/getAnimales.php`)
             .then(res => {
                 if (!res.ok) throw new Error('Error al cargar los animales');
                 return res.json();
@@ -80,8 +82,8 @@ export default function Animales() {
         setSaving(true);
         const isNew = !selectedAnimal.id;
         const endpoint = isNew 
-            ? 'http://localhost/rjs_animal_haus/api/createAnimal.php' 
-            : 'http://localhost/rjs_animal_haus/api/updateAnimal.php';
+            ? `${API_BASE_URL}/createAnimal.php` 
+            : `${API_BASE_URL}/updateAnimal.php`;
 
         const payload = {
             nombre: selectedAnimal.nombre
@@ -118,7 +120,7 @@ export default function Animales() {
 
     const handleConfirmAnular = () => {
         setSaving(true);
-        fetch('http://localhost/rjs_animal_haus/api/anularAnimal.php', {
+        fetch(`${API_BASE_URL}/anularAnimal.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -169,7 +171,7 @@ export default function Animales() {
                                 </Typography>
                             </Box>
                         </Box>
-                        <Button 
+                        <Button size="small" 
                             variant="contained" 
                             startIcon={<AddIcon />}
                             onClick={handleAddClick}
@@ -183,8 +185,8 @@ export default function Animales() {
                     ) : error ? (
                         <Alert severity="error">{error}</Alert>
                     ) : (
-                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflow: 'hidden' }}>
-                            <Table>
+                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                                     <TableRow>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>ID</TableCell>
@@ -245,14 +247,14 @@ export default function Animales() {
                 maxWidth="sm"
                 PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
             >
-                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 800, backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 3 }}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
                     {selectedAnimal?.id ? <EditIcon sx={{ color: '#c4a484' }} /> : <AddIcon sx={{ color: '#c4a484' }} />}
                     {selectedAnimal?.id ? 'Editar Animal' : 'Nuevo Animal'}
                 </DialogTitle>
                 <DialogContent sx={{ backgroundColor: '#ffffff', p: 4, pt: '32px !important' }}>
                     {selectedAnimal && (
                         <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                            <TextField
+                            <TextField size="small"
                                 label="Nombre del Animal"
                                 name="nombre"
                                 value={selectedAnimal.nombre || ''}
@@ -267,7 +269,7 @@ export default function Animales() {
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: selectedAnimal?.id ? 'space-between' : 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
                     {selectedAnimal?.id && (
-                        <Button 
+                        <Button size="small" 
                             onClick={handleAnularClick} 
                             color="error" 
                             variant="text" 
@@ -279,10 +281,10 @@ export default function Animales() {
                         </Button>
                     )}
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
+                        <Button size="small" onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
                             Cancelar
                         </Button>
-                        <Button 
+                        <Button size="small" 
                             onClick={handleSave} 
                             variant="contained" 
                             disabled={saving}
@@ -311,10 +313,10 @@ export default function Animales() {
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
+                    <Button size="small" onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
+                    <Button size="small" onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
                         {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, eliminar'}
                     </Button>
                 </DialogActions>
@@ -334,3 +336,5 @@ export default function Animales() {
         </Box>
     );
 }
+
+

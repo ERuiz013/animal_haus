@@ -52,8 +52,14 @@ try {
     $updateStmt = $pdo->prepare("UPDATE usuarios SET last_login_at = ? WHERE uuid = ?");
     $updateStmt->execute([date('Y-m-d H:i:s'), $user['uuid']]);
 
+    $require_password_change = false;
+    if ($password === 'password123') {
+        $require_password_change = true;
+    }
+
     echo json_encode([
         'message' => 'Login exitoso',
+        'require_password_change' => $require_password_change,
         'user' => [
             'uuid' => $user['uuid'],
             'nombre' => $user['nombre'],

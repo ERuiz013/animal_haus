@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Snackbar, FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip, Chip, TablePagination } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CategoryIcon from '@mui/icons-material/Category';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_BASE_URL } from '../config';
+
 
 export default function Categorias() {
     const [categorias, setCategorias] = useState([]);
@@ -27,7 +29,7 @@ export default function Categorias() {
 
     const fetchCategorias = () => {
         setLoading(true);
-        fetch('http://localhost/rjs_animal_haus/api/getCategorias.php')
+        fetch(`${API_BASE_URL}/getCategorias.php`)
             .then(res => {
                 if (!res.ok) throw new Error('Error al cargar las categorías');
                 return res.json();
@@ -80,8 +82,8 @@ export default function Categorias() {
         setSaving(true);
         const isNew = !selectedCategoria.id;
         const endpoint = isNew 
-            ? 'http://localhost/rjs_animal_haus/api/createCategoria.php' 
-            : 'http://localhost/rjs_animal_haus/api/updateCategoria.php';
+            ? `${API_BASE_URL}/createCategoria.php` 
+            : `${API_BASE_URL}/updateCategoria.php`;
 
         const payload = {
             nombre: selectedCategoria.nombre,
@@ -120,7 +122,7 @@ export default function Categorias() {
 
     const handleConfirmAnular = () => {
         setSaving(true);
-        fetch('http://localhost/rjs_animal_haus/api/anularCategoria.php', {
+        fetch(`${API_BASE_URL}/anularCategoria.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -178,7 +180,7 @@ export default function Categorias() {
                                 </Typography>
                             </Box>
                         </Box>
-                        <Button 
+                        <Button size="small" 
                             variant="contained" 
                             startIcon={<AddIcon />}
                             onClick={handleAddClick}
@@ -192,8 +194,8 @@ export default function Categorias() {
                     ) : error ? (
                         <Alert severity="error">{error}</Alert>
                     ) : (
-                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflow: 'hidden' }}>
-                            <Table>
+                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                                     <TableRow>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>ID</TableCell>
@@ -270,14 +272,14 @@ export default function Categorias() {
                 maxWidth="sm"
                 PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
             >
-                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 800, backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 3 }}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
                     {selectedCategoria?.id ? <EditIcon sx={{ color: '#c4a484' }} /> : <AddIcon sx={{ color: '#c4a484' }} />}
                     {selectedCategoria?.id ? 'Editar Categoría' : 'Nueva Categoría'}
                 </DialogTitle>
                 <DialogContent sx={{ backgroundColor: '#ffffff', p: 4, pt: '32px !important' }}>
                     {selectedCategoria && (
                         <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                            <TextField
+                            <TextField size="small"
                                 label="Nombre de la Categoría"
                                 name="nombre"
                                 value={selectedCategoria.nombre || ''}
@@ -288,9 +290,9 @@ export default function Categorias() {
                                 autoFocus
                             />
                             
-                            <FormControl fullWidth disabled={saving} variant="outlined">
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
                                 <InputLabel id="parent-category-label">Subcategoría de...</InputLabel>
-                                <Select
+                                <Select size="small"
                                     labelId="parent-category-label"
                                     name="parent_id"
                                     value={selectedCategoria.parent_id || ''}
@@ -311,7 +313,7 @@ export default function Categorias() {
                                 </Select>
                             </FormControl>
 
-                            <TextField
+                            <TextField size="small"
                                 label="Descripción (Opcional)"
                                 name="descripcion"
                                 value={selectedCategoria.descripcion || ''}
@@ -327,7 +329,7 @@ export default function Categorias() {
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: selectedCategoria?.id ? 'space-between' : 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
                     {selectedCategoria?.id && (
-                        <Button 
+                        <Button size="small" 
                             onClick={handleAnularClick} 
                             color="error" 
                             variant="text" 
@@ -339,10 +341,10 @@ export default function Categorias() {
                         </Button>
                     )}
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
+                        <Button size="small" onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
                             Cancelar
                         </Button>
-                        <Button 
+                        <Button size="small" 
                             onClick={handleSave} 
                             variant="contained" 
                             disabled={saving}
@@ -371,10 +373,10 @@ export default function Categorias() {
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
+                    <Button size="small" onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
+                    <Button size="small" onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
                         {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, eliminar'}
                     </Button>
                 </DialogActions>
@@ -394,3 +396,5 @@ export default function Categorias() {
         </Box>
     );
 }
+
+

@@ -15,9 +15,10 @@ require_once 'db.php';
 try {
     // 1. Intentar obtener los productos más vendidos desde ventas_detalles
     $queryVentas = "
-        SELECT p.*, COUNT(vd.producto_id) as sales_count 
+        SELECT p.*, COUNT(vd.producto_id) as sales_count, COALESCE(SUM(e.cantidad_actual), 0) AS stock 
         FROM productos p
         JOIN ventas_detalles vd ON p.id = vd.producto_id
+        LEFT JOIN existencias e ON p.id = e.producto_id
         WHERE p.estado = 1
         GROUP BY p.id
         ORDER BY sales_count DESC
@@ -30,9 +31,12 @@ try {
     // 2. Si no hay registros en ventas_detalles, buscar 4 productos cualesquiera
     if (count($productos) === 0) {
         $queryFallback = "
-            SELECT * FROM productos 
-            WHERE estado = 1 
-            ORDER BY id DESC 
+            SELECT p.*, COALESCE(SUM(e.cantidad_actual), 0) AS stock 
+            FROM productos p 
+            LEFT JOIN existencias e ON p.id = e.producto_id
+            WHERE p.estado = 1 
+            GROUP BY p.id
+            ORDER BY p.id DESC 
             LIMIT 8
         ";
         $stmtFallback = $pdo->query($queryFallback);

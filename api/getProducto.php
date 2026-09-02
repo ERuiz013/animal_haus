@@ -20,11 +20,13 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $id = intval($_GET['id']);
 
 try {
-    $stmt = $pdo->prepare("SELECT p.*, c.nombre as categoria_nombre, u.nombre as unidad_nombre 
+    $stmt = $pdo->prepare("SELECT p.*, c.nombre as categoria_nombre, u.nombre as unidad_nombre, COALESCE(SUM(e.cantidad_actual), 0) AS stock 
                            FROM productos p 
                            LEFT JOIN categorias c ON p.categoria_id = c.id
                            LEFT JOIN unidades_medidas u ON p.uni_med_id = u.id
-                           WHERE p.id = ? AND p.estado = 1");
+                           LEFT JOIN existencias e ON p.id = e.producto_id
+                           WHERE p.id = ? AND p.estado = 1
+                           GROUP BY p.id");
     $stmt->execute([$id]);
     $producto = $stmt->fetch();
 

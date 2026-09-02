@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 import { FavoriteProvider } from './context/FavoriteContext.jsx'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <FavoriteProvider>

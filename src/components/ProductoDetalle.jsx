@@ -36,17 +36,21 @@ import {
   ContentCopy as ContentCopyIcon,
   Close as CloseIcon,
   Add as AddIcon,
-  Remove as RemoveIcon
+  Remove as RemoveIcon,
+  DescriptionOutlined as DescriptionOutlinedIcon,
+  ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
 import { useFavorite } from '../context/FavoriteContext';
+import { API_BASE_URL, IMAGE_BASE_URL } from '../config';
+
 
 const ProductCard = ({ product, isFavorite, onToggleFavorite, onClick, onAddToCart }) => (
   <Card
     elevation={0}
     sx={{
       display: 'flex', flexDirection: 'column', width: '100%', backgroundColor: '#ffffff',
-      borderRadius: '24px', position: 'relative', cursor: 'pointer',
+      borderRadius: { xs: '16px', sm: '24px' }, position: 'relative', cursor: 'pointer',
       border: '1px solid #f1f5f9',
       boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -58,42 +62,43 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onClick, onAddToCa
     <IconButton
       onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
       sx={{
-        position: 'absolute', top: 12, right: 12,
+        position: 'absolute', top: { xs: 8, sm: 12 }, right: { xs: 8, sm: 12 },
         backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(4px)',
         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+        width: { xs: 30, sm: 40 }, height: { xs: 30, sm: 40 },
         '&:hover': { backgroundColor: '#ffffff', transform: 'scale(1.1)' },
         transition: 'all 0.2s', zIndex: 2
       }}
     >
-      {isFavorite ? <FavoriteIcon sx={{ color: '#ef4444', fontSize: '1.2rem' }} /> : <FavoriteBorderIcon sx={{ color: '#94a3b8', fontSize: '1.2rem' }} />}
+      {isFavorite ? <FavoriteIcon sx={{ color: '#ef4444', fontSize: { xs: '1rem', sm: '1.2rem' } }} /> : <FavoriteBorderIcon sx={{ color: '#94a3b8', fontSize: { xs: '1rem', sm: '1.2rem' } }} />}
     </IconButton>
 
-    <Box sx={{ p: 2, pb: 0 }}>
+    <Box sx={{ p: { xs: 1, sm: 2 }, pb: 0 }}>
       <Box sx={{
-        height: 220, backgroundColor: '#ffffff', borderRadius: '16px',
+        height: { xs: 130, sm: 220 }, backgroundColor: '#ffffff', borderRadius: { xs: '12px', sm: '16px' },
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden', position: 'relative'
       }}>
         <Box
           className="product-img" component="img"
-          src={product.imagen ? `http://localhost/rjs_animal_haus/${product.imagen}` : 'https://placehold.co/400x400/ffffff/94a3b8?text=Sin+Imagen'}
+          src={product.imagen ? `${IMAGE_BASE_URL}${ product.imagen }` : 'https://placehold.co/400x400/ffffff/94a3b8?text=Sin+Imagen'}
           alt={product.nombre}
           sx={{ maxWidth: '80%', maxHeight: '80%', objectFit: 'contain', transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
         />
       </Box>
     </Box>
 
-    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 3, pt: 2 }}>
-      <Typography variant="subtitle1" fontWeight="700" sx={{ color: '#0f172a', lineHeight: 1.4, mb: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '2.8em', fontSize: '1.05rem' }}>
+    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: { xs: 1.5, sm: 3 }, pt: { xs: 1, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 3 } } }}>
+      <Typography variant="subtitle1" fontWeight="700" sx={{ color: '#0f172a', lineHeight: 1.3, mb: { xs: 1, sm: 2 }, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: { xs: '2.6em', sm: '2.6em' }, fontSize: { xs: '0.85rem', sm: '1.05rem' } }}>
         {product.nombre}
       </Typography>
 
-      <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <Box>
-          <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+          <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: { xs: 0, sm: 0.5 }, fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
             Precio
           </Typography>
-          <Typography variant="h6" fontWeight="900" sx={{ color: '#dc2626', lineHeight: 1 }}>
+          <Typography variant="h6" fontWeight="900" sx={{ color: '#dc2626', lineHeight: 1, fontSize: { xs: '0.9rem', sm: '1.25rem' } }}>
             Gs. {Number(product.precio).toLocaleString('es-PY')}
           </Typography>
         </Box>
@@ -101,12 +106,12 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onClick, onAddToCa
           onClick={(e) => { e.stopPropagation(); onAddToCart(); }}
           sx={{
             backgroundColor: '#1e293b', color: '#fff', boxShadow: '0 4px 12px rgba(30, 41, 59, 0.2)',
-            borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            borderRadius: '50%', width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 }, display: 'flex', alignItems: 'center', justifyContent: 'center',
             '&:hover': { backgroundColor: '#334155', transform: 'scale(1.05)' },
-            transition: 'all 0.2s'
+            transition: 'all 0.2s', flexShrink: 0, ml: 1
           }}
         >
-          <AddShoppingCartOutlinedIcon sx={{ fontSize: '1.2rem' }} />
+          <AddShoppingCartOutlinedIcon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
         </Box>
       </Box>
     </CardContent>
@@ -123,13 +128,21 @@ export default function ProductoDetalle() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [descDialogOpen, setDescDialogOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart() || { addToCart: () => { } };
   const { favorites, toggleFavorite } = useFavorite() || { favorites: {}, toggleFavorite: () => { } };
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const productId = urlParams.get('id');
+  const [productId, setProductId] = useState(() => new URLSearchParams(window.location.search).get('id'));
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setProductId(new URLSearchParams(window.location.search).get('id'));
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     if (!productId) {
@@ -138,7 +151,9 @@ export default function ProductoDetalle() {
       return;
     }
 
-    fetch(`http://localhost/rjs_animal_haus/api/getProducto.php?id=${productId}`)
+    const API_URL = API_BASE_URL;
+
+    fetch(`${API_URL}/getProducto.php?id=${productId}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) {
@@ -157,7 +172,9 @@ export default function ProductoDetalle() {
   useEffect(() => {
     if (producto && producto.categoria_id) {
       setLoadingSimilar(true);
-      fetch('http://localhost/rjs_animal_haus/api/getProductos.php')
+      const API_URL = API_BASE_URL;
+
+      fetch(`${API_URL}/getProductos.php`)
         .then(res => res.json())
         .then(data => {
           if (!data.error && Array.isArray(data)) {
@@ -185,12 +202,11 @@ export default function ProductoDetalle() {
   };
 
   const handleProductClick = (id) => {
-    window.history.pushState({}, '', `/producto?id=${id}`);
-    window.scrollTo(0, 0);
+    window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/producto?id=${id}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setQuantity(1);
+    setLoading(true);
     window.dispatchEvent(new Event('popstate'));
-    // Since App.jsx listens to popstate, we also need to trigger a re-render if it doesn't force a full reload.
-    // For safety in this specific vanilla-like React routing, a reload might be cleaner to ensure the top-level effects run.
-    window.location.reload();
   };
 
   const handleAddSimilarToCart = (e, prod) => {
@@ -248,7 +264,7 @@ export default function ProductoDetalle() {
   };
 
   const handleGoBack = () => {
-    window.history.pushState({}, '', '/');
+    window.history.pushState({}, '', import.meta.env.BASE_URL);
     window.dispatchEvent(new Event('popstate'));
   };
 
@@ -274,10 +290,10 @@ export default function ProductoDetalle() {
   }
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: '#f3efe6', minHeight: '100vh', pt: { xs: 2, md: 3 }, pb: { xs: 4, md: 8 } }}>
+    <Box sx={{ flexGrow: 1, backgroundColor: '#f3efe6', minHeight: '100vh', pt: { xs: 2, md: 3 }, pb: { xs: 14, md: 8 } }}>
       <Container maxWidth="lg">
         {/* Breadcrumbs / Back button */}
-        <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ mb: { xs: 2, md: 3 }, display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconButton onClick={handleGoBack} sx={{ bgcolor: 'rgba(0,0,0,0.05)', '&:hover': { bgcolor: 'rgba(0,0,0,0.1)' } }}>
             <ArrowBackIcon />
           </IconButton>
@@ -301,11 +317,32 @@ export default function ProductoDetalle() {
               alignItems: 'center',
               justifyContent: 'center',
               borderRight: { md: '1px solid #f1f5f9' },
-              borderBottom: { xs: '1px solid #f1f5f9', md: 'none' }
+              borderBottom: { xs: '1px solid #f1f5f9', md: 'none' },
+              position: 'relative'
             }}>
+              <Box sx={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 1, zIndex: 10 }}>
+                <IconButton
+                  onClick={handleShare}
+                  sx={{ bgcolor: 'rgba(255,255,255,0.95)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', '&:hover': { bgcolor: '#ffffff', transform: 'scale(1.1)' }, transition: 'all 0.2s', width: { xs: 40, sm: 48 }, height: { xs: 40, sm: 48 } }}
+                  title="Compartir"
+                >
+                  <ShareIcon sx={{ color: '#64748b' }} />
+                </IconButton>
+                <IconButton
+                  onClick={() => toggleFavorite(producto.id)}
+                  sx={{ bgcolor: 'rgba(255,255,255,0.95)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', '&:hover': { bgcolor: '#ffffff', transform: 'scale(1.1)' }, transition: 'all 0.2s', width: { xs: 40, sm: 48 }, height: { xs: 40, sm: 48 } }}
+                >
+                  {favorites?.[producto.id] ? (
+                    <FavoriteIcon sx={{ color: '#d32f2f' }} />
+                  ) : (
+                    <FavoriteBorderIcon sx={{ color: '#64748b' }} />
+                  )}
+                </IconButton>
+              </Box>
+
               <Box
                 component="img"
-                src={producto.imagen ? `http://localhost/rjs_animal_haus/${producto.imagen}` : 'https://placehold.co/600x600/f1f5f9/94a3b8?text=Sin+Imagen'}
+                src={producto.imagen ? `${IMAGE_BASE_URL}${ producto.imagen }` : 'https://placehold.co/600x600/f1f5f9/94a3b8?text=Sin+Imagen'}
                 alt={producto.nombre}
                 sx={{
                   maxWidth: '100%',
@@ -319,37 +356,13 @@ export default function ProductoDetalle() {
             {/* Detalles del producto */}
             <Box sx={{ flex: 1, width: { xs: '100%', md: '50%' } }}>
               <CardContent sx={{ p: { xs: 4, md: 6 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                  <Typography variant="overline" sx={{ color: '#d32f2f', fontWeight: 700, letterSpacing: '1px' }}>
-                    {producto.categoria_nombre || 'Sin Categoría'}
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <IconButton
-                      onClick={handleShare}
-                      sx={{ bgcolor: 'rgba(0,0,0,0.04)', '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' } }}
-                      title="Compartir"
-                    >
-                      <ShareIcon sx={{ color: '#64748b' }} />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => toggleFavorite(producto.id)}
-                      sx={{ bgcolor: 'rgba(0,0,0,0.04)', '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' } }}
-                    >
-                      {favorites?.[producto.id] ? (
-                        <FavoriteIcon sx={{ color: '#d32f2f' }} />
-                      ) : (
-                        <FavoriteBorderIcon sx={{ color: '#64748b' }} />
-                      )}
-                    </IconButton>
-                  </Box>
-                </Box>
 
-                <Typography variant="h3" component="h1" fontWeight="800" sx={{ color: '#0f172a', mb: 2, letterSpacing: '-0.5px', fontSize: { xs: '2rem', md: '2.5rem' } }}>
+                <Typography variant="h3" component="h1" fontWeight="800" sx={{ color: '#0f172a', mb: 2, letterSpacing: '-0.5px', fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2 }}>
                   {producto.nombre}
                 </Typography>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-                  <Typography variant="h4" fontWeight="900" sx={{ color: '#dc2626' }}>
+                  <Typography variant="h4" fontWeight="900" sx={{ color: '#dc2626', fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
                     Gs. {Number(producto.precio).toLocaleString('es-PY')}
                   </Typography>
                   {producto.stock !== undefined && (
@@ -364,17 +377,67 @@ export default function ProductoDetalle() {
 
                 <Divider sx={{ mb: 4, borderColor: '#f1f5f9' }} />
 
-                <Typography variant="subtitle1" fontWeight="700" sx={{ color: '#1e293b', mb: 1 }}>
-                  Descripción
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#64748b', mb: 4, lineHeight: 1.8 }}>
-                  {producto.detalle || producto.descripcion || 'Este producto no cuenta con una descripción detallada en este momento.'}
-                </Typography>
+                <Box
+                  onClick={() => setDescDialogOpen(true)}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    mb: 4,
+                    backgroundColor: '#ffffff',
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      backgroundColor: '#f8fafc',
+                      borderColor: '#cbd5e1',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ 
+                      backgroundColor: '#f1f5f9', 
+                      p: 1, 
+                      borderRadius: '10px',
+                      display: 'flex'
+                    }}>
+                      <DescriptionOutlinedIcon sx={{ color: '#475569' }} />
+                    </Box>
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: '#1e293b', lineHeight: 1.2 }}>
+                        Descripción del producto
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748b' }}>
+                        Toca para leer más detalles
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <ChevronRightIcon sx={{ color: '#94a3b8' }} />
+                </Box>
 
-                <Box sx={{ mt: 'auto', pt: 4, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: { xs: 'center', sm: 'flex-end' } }}>
+                {/* Spacer removed as requested */}
+
+                <Box sx={{ 
+                  mt: 'auto', pt: { xs: 0, sm: 4 }, 
+                  display: 'flex', flexDirection: 'row', gap: 2, alignItems: { xs: 'center', sm: 'flex-end' },
+                  position: { xs: 'fixed', sm: 'static' },
+                  bottom: { xs: 0, sm: 'auto' },
+                  left: { xs: 0, sm: 'auto' },
+                  right: { xs: 0, sm: 'auto' },
+                  backgroundColor: { xs: '#ffffff', sm: 'transparent' },
+                  p: { xs: 2, sm: 0 },
+                  pb: { xs: 'calc(16px + env(safe-area-inset-bottom))', sm: 0 },
+                  boxShadow: { xs: '0 -4px 24px rgba(0,0,0,0.1)', sm: 'none' },
+                  zIndex: { xs: 1100, sm: 1 },
+                  borderTop: { xs: '1px solid #f1f5f9', sm: 'none' }
+                }}>
                   {/* Selector de cantidad */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', width: { xs: '100%', sm: 'auto' }, gap: 1, alignItems: 'center' }}>
-                    <Typography variant="body2" fontWeight="800" sx={{ color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', width: { xs: '130px', sm: 'auto' }, gap: 1, alignItems: 'center', flexShrink: 0 }}>
+                    <Typography variant="body2" fontWeight="800" sx={{ display: { xs: 'none', sm: 'block' }, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Cantidad
                     </Typography>
                     <Box sx={{
@@ -383,22 +446,31 @@ export default function ProductoDetalle() {
                       border: '2px solid #e2e8f0',
                       borderRadius: '50px',
                       backgroundColor: '#f8fafc',
-                      p: 0.5,
+                      p: { xs: 0, sm: 0.5 },
                       width: '100%',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      height: { xs: '54px', sm: 'auto' }
                     }}>
                       <IconButton
                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                        sx={{ width: 44, height: 44, color: '#64748b', '&:hover': { bgcolor: '#e2e8f0' } }}
+                        sx={{ width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, color: '#64748b', '&:hover': { bgcolor: '#e2e8f0' } }}
                       >
                         <RemoveIcon />
                       </IconButton>
-                      <Typography sx={{ width: 40, textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem', color: '#0f172a' }}>
+                      <Typography sx={{ width: 30, textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem', color: '#0f172a' }}>
                         {quantity}
                       </Typography>
                       <IconButton
-                        onClick={() => setQuantity(q => q + 1)}
-                        sx={{ width: 44, height: 44, color: '#64748b', '&:hover': { bgcolor: '#e2e8f0' } }}
+                        onClick={() => {
+                          const maxStock = producto?.stock !== undefined && producto?.stock !== null ? Number(producto.stock) : Infinity;
+                          if (quantity >= maxStock) {
+                            setSnackbarMessage(`Solo hay ${maxStock} disponible(s)`);
+                            setSnackbarOpen(true);
+                          } else {
+                            setQuantity(q => q + 1);
+                          }
+                        }}
+                        sx={{ width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, color: '#64748b', '&:hover': { bgcolor: '#e2e8f0' } }}
                       >
                         <AddIcon />
                       </IconButton>
@@ -414,8 +486,9 @@ export default function ProductoDetalle() {
                       backgroundColor: '#1e293b',
                       color: '#ffffff',
                       borderRadius: '50px',
-                      py: 1.8,
-                      fontSize: '1.1rem',
+                      py: { xs: 0, sm: 1.8 },
+                      height: { xs: '54px', sm: 'auto' },
+                      fontSize: { xs: '1rem', sm: '1.1rem' },
                       fontWeight: 700,
                       textTransform: 'none',
                       boxShadow: '0 10px 20px rgba(30, 41, 59, 0.2)',
@@ -426,11 +499,12 @@ export default function ProductoDetalle() {
                       },
                       transition: 'all 0.3s ease',
                       display: 'flex',
-                      gap: 2
+                      gap: { xs: 1, sm: 2 },
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     <AddShoppingCartOutlinedIcon />
-                    Añadir al Carrito
+                    Añadir al carrito
                   </Button>
                 </Box>
               </CardContent>
@@ -440,15 +514,15 @@ export default function ProductoDetalle() {
 
         {/* Artículos Similares */}
         {similarProducts.length > 0 && (
-          <Box sx={{ mt: 10, mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-              <Box sx={{ height: 2, width: 40, bgcolor: '#f59e0b', borderRadius: 2 }} />
+          <Box sx={{ mt: { xs: 5, md: 8 }, mb: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1, textAlign: 'center' }}>
+              <Box sx={{ height: 2, width: 40, bgcolor: '#f59e0b', borderRadius: 2, display: { xs: 'none', sm: 'block' } }} />
               <Typography variant="h3" fontWeight="900" sx={{ color: '#1e293b', letterSpacing: '-0.02em', fontSize: { xs: '1.75rem', sm: '3rem' } }}>
                 Artículos Similares
               </Typography>
-              <Box sx={{ height: 2, width: 40, bgcolor: '#f59e0b', borderRadius: 2 }} />
+              <Box sx={{ height: 2, width: 40, bgcolor: '#f59e0b', borderRadius: 2, display: { xs: 'none', sm: 'block' } }} />
             </Box>
-            <Typography variant="body1" sx={{ color: '#64748b', mb: 4, ml: 7, fontWeight: 500 }}>
+            <Typography variant="body1" sx={{ color: '#64748b', mb: 4, textAlign: 'center', fontWeight: 500 }}>
               Otros clientes también compraron
             </Typography>
 
@@ -579,6 +653,32 @@ export default function ProductoDetalle() {
             </Box>
 
           </Box>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={descDialogOpen}
+        onClose={() => setDescDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '24px',
+            padding: 2,
+            boxShadow: '0 24px 48px rgba(0,0,0,0.1)'
+          }
+        }}
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1, pt: 1, color: '#0f172a', fontWeight: 700 }}>
+          Descripción del Producto
+          <IconButton onClick={() => setDescDialogOpen(false)} sx={{ bgcolor: 'rgba(0,0,0,0.04)', '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' } }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 2 }}>
+          <Typography variant="body1" sx={{ color: '#475569', lineHeight: 1.8, whiteSpace: 'pre-line' }}>
+            {producto.detalle || producto.descripcion || 'Este producto no cuenta con una descripción detallada en este momento.'}
+          </Typography>
         </DialogContent>
       </Dialog>
     </Box>

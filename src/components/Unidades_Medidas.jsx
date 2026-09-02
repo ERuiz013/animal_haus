@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Snackbar, FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip, Chip, TablePagination } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import ScaleIcon from '@mui/icons-material/Scale'; // An icon for Unidades de Medida
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_BASE_URL } from '../config';
+
 
 export default function UnidadesMedidas() {
     const [unidades, setUnidades] = useState([]);
@@ -27,7 +29,7 @@ export default function UnidadesMedidas() {
 
     const fetchUnidades = () => {
         setLoading(true);
-        fetch('http://localhost/rjs_animal_haus/api/getUnidadesMedidas.php')
+        fetch(`${API_BASE_URL}/getUnidadesMedidas.php`)
             .then(res => {
                 if (!res.ok) throw new Error('Error al cargar las unidades de medida');
                 return res.json();
@@ -80,8 +82,8 @@ export default function UnidadesMedidas() {
         setSaving(true);
         const isNew = !selectedUnidad.id;
         const endpoint = isNew 
-            ? 'http://localhost/rjs_animal_haus/api/createUnidadMedida.php' 
-            : 'http://localhost/rjs_animal_haus/api/updateUnidadMedida.php';
+            ? `${API_BASE_URL}/createUnidadMedida.php` 
+            : `${API_BASE_URL}/updateUnidadMedida.php`;
 
         const payload = {
             nombre: selectedUnidad.nombre,
@@ -120,7 +122,7 @@ export default function UnidadesMedidas() {
 
     const handleConfirmAnular = () => {
         setSaving(true);
-        fetch('http://localhost/rjs_animal_haus/api/anularUnidadMedida.php', {
+        fetch(`${API_BASE_URL}/anularUnidadMedida.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -171,7 +173,7 @@ export default function UnidadesMedidas() {
                                 </Typography>
                             </Box>
                         </Box>
-                        <Button 
+                        <Button size="small" 
                             variant="contained" 
                             startIcon={<AddIcon />}
                             onClick={handleAddClick}
@@ -185,8 +187,8 @@ export default function UnidadesMedidas() {
                     ) : error ? (
                         <Alert severity="error">{error}</Alert>
                     ) : (
-                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflow: 'hidden' }}>
-                            <Table>
+                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                                     <TableRow>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>ID</TableCell>
@@ -259,14 +261,14 @@ export default function UnidadesMedidas() {
                 maxWidth="sm"
                 PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
             >
-                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 800, backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 3 }}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
                     {selectedUnidad?.id ? <EditIcon sx={{ color: '#c4a484' }} /> : <AddIcon sx={{ color: '#c4a484' }} />}
                     {selectedUnidad?.id ? 'Editar Unidad de Medida' : 'Nueva Unidad de Medida'}
                 </DialogTitle>
                 <DialogContent sx={{ backgroundColor: '#ffffff', p: 4, pt: '32px !important' }}>
                     {selectedUnidad && (
                         <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                            <TextField
+                            <TextField size="small"
                                 label="Nombre de la Unidad"
                                 name="nombre"
                                 value={selectedUnidad.nombre || ''}
@@ -277,7 +279,7 @@ export default function UnidadesMedidas() {
                                 autoFocus
                             />
                             
-                            <TextField
+                            <TextField size="small"
                                 label="Símbolo"
                                 name="simbolo"
                                 value={selectedUnidad.simbolo || ''}
@@ -287,9 +289,9 @@ export default function UnidadesMedidas() {
                                 variant="outlined"
                             />
 
-                            <FormControl fullWidth disabled={saving} variant="outlined">
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
                                 <InputLabel id="decimal-label">Permite Decimales</InputLabel>
-                                <Select
+                                <Select size="small"
                                     labelId="decimal-label"
                                     name="permitir_decimal"
                                     value={selectedUnidad.permitir_decimal || 'N'}
@@ -305,7 +307,7 @@ export default function UnidadesMedidas() {
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: selectedUnidad?.id ? 'space-between' : 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
                     {selectedUnidad?.id && (
-                        <Button 
+                        <Button size="small" 
                             onClick={handleAnularClick} 
                             color="error" 
                             variant="text" 
@@ -317,10 +319,10 @@ export default function UnidadesMedidas() {
                         </Button>
                     )}
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
+                        <Button size="small" onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
                             Cancelar
                         </Button>
-                        <Button 
+                        <Button size="small" 
                             onClick={handleSave} 
                             variant="contained" 
                             disabled={saving}
@@ -349,10 +351,10 @@ export default function UnidadesMedidas() {
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
+                    <Button size="small" onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
+                    <Button size="small" onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
                         {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, eliminar'}
                     </Button>
                 </DialogActions>
@@ -372,3 +374,5 @@ export default function UnidadesMedidas() {
         </Box>
     );
 }
+
+

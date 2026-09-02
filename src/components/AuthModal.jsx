@@ -18,6 +18,8 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import logo from '../assets/animalhause.png';
+import { API_BASE_URL } from '../config';
+
 
 export default function AuthModal({ open, onClose, initialMode = 'login', onLoginSuccess }) {
   const theme = useTheme();
@@ -33,7 +35,8 @@ export default function AuthModal({ open, onClose, initialMode = 'login', onLogi
     password: '',
     nombre: '',
     apellido: '',
-    telefono: ''
+    telefono: '',
+    documento: ''
   });
 
   // Reset form when modal opens/closes or mode changes
@@ -44,7 +47,8 @@ export default function AuthModal({ open, onClose, initialMode = 'login', onLogi
       password: '',
       nombre: '',
       apellido: '',
-      telefono: ''
+      telefono: '',
+      documento: ''
     });
     setShowPassword(false);
     setErrorMsg('');
@@ -65,7 +69,7 @@ export default function AuthModal({ open, onClose, initialMode = 'login', onLogi
 
     if (mode === 'login') {
       try {
-        const response = await fetch('http://localhost/rjs_animal_haus/api/login.php', {
+        const response = await fetch(`${API_BASE_URL}/login.php`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: formData.email, password: formData.password })
@@ -78,14 +82,14 @@ export default function AuthModal({ open, onClose, initialMode = 'login', onLogi
           return;
         }
         
-        onLoginSuccess(result.user);
+        onLoginSuccess(result.user, result.require_password_change);
       } catch (err) {
         console.error('Error durante login:', err);
         setErrorMsg('No se pudo conectar con el servidor. Verifica que XAMPP esté encendido.');
       }
     } else if (mode === 'recover') {
       try {
-        const response = await fetch('http://localhost/rjs_animal_haus/api/recover_password.php', {
+        const response = await fetch(`${API_BASE_URL}/recover_password.php`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: formData.email })
@@ -111,11 +115,12 @@ export default function AuthModal({ open, onClose, initialMode = 'login', onLogi
         password: formData.password,
         nombre: formData.nombre,
         apellido: formData.apellido,
-        telefono: formData.telefono
+        telefono: formData.telefono,
+        documento: formData.documento
       };
       
       try {
-        const response = await fetch('http://localhost/rjs_animal_haus/api/register.php', {
+        const response = await fetch(`${API_BASE_URL}/register.php`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -194,6 +199,15 @@ export default function AuthModal({ open, onClose, initialMode = 'login', onLogi
                 fullWidth
                 required
                 value={formData.apellido}
+                onChange={handleChange}
+              />
+              <TextField
+                label="CI / RUC"
+                name="documento"
+                variant="outlined"
+                fullWidth
+                required
+                value={formData.documento}
                 onChange={handleChange}
               />
               <TextField

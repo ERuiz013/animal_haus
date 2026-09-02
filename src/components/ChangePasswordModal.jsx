@@ -15,8 +15,10 @@ import {
   OutlinedInput
 } from '@mui/material';
 import { Close as CloseIcon, Visibility, VisibilityOff } from '@mui/icons-material';
+import { API_BASE_URL } from '../config';
 
-export default function ChangePasswordModal({ open, onClose, userData }) {
+
+export default function ChangePasswordModal({ open, onClose, userData, onPasswordChanged }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -75,7 +77,7 @@ export default function ChangePasswordModal({ open, onClose, userData }) {
     }
 
     try {
-      const response = await fetch('http://localhost/rjs_animal_haus/api/change_password.php', {
+      const response = await fetch(`${API_BASE_URL}/change_password.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -102,6 +104,7 @@ export default function ChangePasswordModal({ open, onClose, userData }) {
       // Optionally close modal after a delay
       setTimeout(() => {
         onClose();
+        if (onPasswordChanged) onPasswordChanged();
       }, 2500);
 
     } catch (err) {

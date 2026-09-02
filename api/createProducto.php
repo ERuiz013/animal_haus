@@ -20,6 +20,7 @@ if (!isset($_POST['nombre'])) {
 $categoria_id = $_POST['categoria_id'] ?? null;
 $animal_id = $_POST['animal_id'] ?? null;
 $uni_med_id = $_POST['uni_med_id'] ?? null;
+$impuesto_id = $_POST['impuesto_id'] ?? null;
 $sku = $_POST['sku'] ?? null;
 $nombre = $_POST['nombre'] ?? null;
 $detalle = $_POST['detalle'] ?? null;
@@ -84,11 +85,22 @@ if (isset($_FILES['imagen'])) {
 }
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO productos (categoria_id, animal_id, uni_med_id, sku, nombre, slug, precio, stock, imagen, detalle, tipo_precio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$categoria_id, $animal_id, $uni_med_id, $sku, $nombre, $slug, $precio, $stock, $imagen, $detalle, $tipo_precio]);
+    $pdo->beginTransaction();
+    $stmt = $pdo->prepare("INSERT INTO productos (categoria_id, animal_id, uni_med_id, impuesto_id, sku, nombre, slug, precio, imagen, detalle, tipo_precio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$categoria_id, $animal_id, $uni_med_id, $impuesto_id, $sku, $nombre, $slug, $precio, $imagen, $detalle, $tipo_precio]);
+    $producto_id = $pdo->lastInsertId();
+    
+    // Inicializar stock en existencias
+    $deposito_id = 1; // Por defecto
+    $stmtExistencia = $pdo->prepare("INSERT INTO existencias (producto_id, deposito_id, cantidad_actual) VALUES (?, ?, 0)");
+    $stmtExistencia->execute([$producto_id, $deposito_id]);
 
-    echo json_encode(['message' => 'Producto creado correctamente', 'id' => $pdo->lastInsertId()]);
+    $pdo->commit();
+    echo json_encode(['message' => 'Producto creado correctamente', 'id' => $producto_id]);
 } catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     http_response_code(500);
     echo json_encode(['error' => 'Ocurrió un error en el servidor.', 'details' => $e->getMessage()]);
 }

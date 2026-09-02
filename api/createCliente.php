@@ -23,6 +23,7 @@ $nombre = $data->nombre;
 $apellido = $data->apellido;
 $email = $data->email;
 $telefono = isset($data->telefono) ? $data->telefono : null;
+$documento = isset($data->documento) ? $data->documento : null;
 
 // UUID V4 equivalent
 $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -36,10 +37,23 @@ $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 $password_hash = password_hash('password123', PASSWORD_DEFAULT); // Default password for manual creation
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO usuarios (uuid, email, password_hash, nombre, apellido, telefono, rol, is_active) VALUES (?, ?, ?, ?, ?, ?, 'customer', 1)");
-    $stmt->execute([$uuid, $email, $password_hash, $nombre, $apellido, $telefono]);
+    $rol = '2'; // According to getClientes.php
+    $stmt = $pdo->prepare("INSERT INTO usuarios (uuid, email, password_hash, nombre, apellido, telefono, documento, rol, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)");
+    $stmt->execute([$uuid, $email, $password_hash, $nombre, $apellido, $telefono, $documento, $rol]);
 
-    echo json_encode(['message' => 'Cliente creado correctamente', 'id' => $pdo->lastInsertId()]);
+    $newId = $pdo->lastInsertId();
+    echo json_encode([
+        'message' => 'Cliente creado correctamente', 
+        'cliente' => [
+            'id' => $newId,
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'email' => $email,
+            'telefono' => $telefono,
+            'documento' => $documento,
+            'is_active' => 1
+        ]
+    ]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Ocurrió un error en el servidor.', 'details' => $e->getMessage()]);

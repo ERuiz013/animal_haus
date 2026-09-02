@@ -21,7 +21,12 @@ if (strlen($q) < 3) {
 
 try {
     // Buscar en la tabla de productos por nombre
-    $stmt = $pdo->prepare("SELECT * FROM productos WHERE estado = 1 AND nombre LIKE :q ORDER BY nombre ASC LIMIT 15");
+    $stmt = $pdo->prepare("SELECT p.*, COALESCE(SUM(e.cantidad_actual), 0) AS stock 
+                           FROM productos p 
+                           LEFT JOIN existencias e ON p.id = e.producto_id 
+                           WHERE p.estado = 1 AND p.nombre LIKE :q 
+                           GROUP BY p.id 
+                           ORDER BY p.nombre ASC LIMIT 15");
     $stmt->execute(['q' => '%' . $q . '%']);
     $productos = $stmt->fetchAll();
     echo json_encode($productos);

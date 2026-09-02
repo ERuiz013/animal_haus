@@ -18,6 +18,17 @@ import {
   Divider,
   Avatar,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Select,
+  InputLabel,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -35,7 +46,12 @@ import {
   Add as AddIcon,
   Remove as RemoveIcon,
   Delete as DeleteIcon,
+  LocationOn as LocationOnIcon,
+  ChevronRight as ChevronRightIcon,
+  Pets as PetsIcon,
 } from '@mui/icons-material';
+import { PiCow, PiHorse } from 'react-icons/pi';
+import { LuTurtle, LuRabbit, LuBird, LuRat, LuFish, LuPiggyBank, LuCat, LuDog } from 'react-icons/lu';
 import logo from '../../../assets/animalhause.png';
 import AuthModal from '../../AuthModal';
 import ChangePasswordModal from '../../ChangePasswordModal';
@@ -43,13 +59,90 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { useCart } from '../../../context/CartContext';
 import { useFavorite } from '../../../context/FavoriteContext';
 
+const getAnimalIcon = (animalName, props = {}) => {
+  const name = animalName.toLowerCase();
+  const iconProps = { size: 20, color: '#f59e0b', ...props };
+
+  if (name.includes('ave') || name.includes('pájaro') || name.includes('exótica') || name.includes('codorni')) return <LuBird {...iconProps} />;
+  if (name.includes('gato') || name.includes('felino')) return <LuCat {...iconProps} />;
+  if (name.includes('perro') || name.includes('canino')) return <LuDog {...iconProps} />;
+  if (name.includes('cerdo')) return <LuPiggyBank {...iconProps} />;
+  if (name.includes('cobayo') || name.includes('roedor') || name.includes('hámster') || name.includes('chinchilla') || name.includes('ratón')) return <LuRat {...iconProps} />;
+  if (name.includes('pez') || name.includes('peces') || name.includes('acuario')) return <LuFish {...iconProps} />;
+  if (name.includes('conejo')) return <LuRabbit {...iconProps} />;
+  if (name.includes('tortuga') || name.includes('reptil') || name.includes('iguana')) return <LuTurtle {...iconProps} />;
+  if (name.includes('vaca') || name.includes('ganado') || name.includes('toro') || name.includes('oveja') || name.includes('cabra') || name.includes('rumiante') || name.includes('ciervo')) return <PiCow {...iconProps} />;
+  if (name.includes('caballo') || name.includes('equino')) return <PiHorse {...iconProps} />;
+
+  return <PetsIcon sx={{ fontSize: '1.25rem', color: '#f59e0b', ...props.sx }} />;
+};
+
 const TikTokIcon = (props) => (
   <SvgIcon {...props} viewBox="0 0 24 24">
     <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.61-5.66-.02-.85-.02-1.7.02-2.55.15-2.18 1.1-4.22 2.67-5.71 1.73-1.63 4.2-2.5 6.64-2.28 0 1.44-.02 2.87.01 4.31-.57-.03-1.14-.02-1.7.07-1.14.21-2.21.94-2.82 1.9-.66 1.05-.8 2.39-.42 3.55.33.99 1.15 1.77 2.11 2.16 1.34.54 2.99.3 4.09-.64.9-.76 1.39-1.92 1.4-3.08.02-3.89.01-7.79.01-11.68z"/>
   </SvgIcon>
 );
 
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import { API_BASE_URL, IMAGE_BASE_URL } from '../../../config';
 
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
+const LocationMarker = ({ position, setPosition }) => {
+  useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+    },
+  });
+  return position === null ? null : (
+    <Marker position={position}></Marker>
+  );
+};
+
+const MapUpdater = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, 15);
+    }
+  }, [center, map]);
+  return null;
+};
+
+
+
+
+const deliveryCities = [
+  { name: 'Asunción', price: 25000 },
+  { name: 'San Lorenzo', price: 20000 },
+  { name: 'Luque', price: 20000 },
+  { name: 'Capiatá', price: 20000 },
+  { name: 'Lambaré', price: 25000 },
+  { name: 'Mariano Roque Alonso', price: 30000 },
+  { name: 'Fernando de la Mora', price: 25000 },
+  { name: 'Ñemby', price: 25000 },
+  { name: 'Limpio', price: 40000 },
+  { name: 'Villa Elisa', price: 25000 },
+  { name: 'Itauguá', price: 20000 },
+  { name: 'Areguá', price: 25000 },
+  { name: 'J. Augusto Saldívar', price: 25000 },
+  { name: 'Guarambaré', price: 30000 },
+  { name: 'Villeta', price: 40000 },
+  { name: 'Itá', price: 30000 },
+  { name: 'Ypané', price: 25000 },
+  { name: 'San Antonio', price: 25000 },
+  { name: 'Ypacarai', price: 45000 }
+];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,7 +151,7 @@ export default function Navbar() {
   const [categoriesList, setCategoriesList] = useState([]);
   const openCategories = Boolean(anchorElCategories);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const { cartItems, removeFromCart, updateQuantity, getCartTotal, getCartCount } = useCart() || { cartItems: [], getCartCount: () => 0, getCartTotal: () => 0 };
+  const { cartItems, removeFromCart, updateQuantity, getCartTotal, getCartCount, clearCart } = useCart() || { cartItems: [], getCartCount: () => 0, getCartTotal: () => 0, clearCart: () => {} };
   const { getFavoriteCount } = useFavorite() || { getFavoriteCount: () => 0 };
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
@@ -71,7 +164,7 @@ export default function Navbar() {
       if (searchVal.length >= 3) {
         setIsSearching(true);
         try {
-          const res = await fetch(`http://localhost/rjs_animal_haus/api/searchProductos.php?q=${encodeURIComponent(searchVal)}`);
+          const res = await fetch(`${API_BASE_URL}/searchProductos.php?q=${encodeURIComponent(searchVal)}`);
           const data = await res.json();
           setSearchResults(data);
         } catch (err) {
@@ -94,7 +187,7 @@ export default function Navbar() {
   const [empresaData, setEmpresaData] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost/rjs_animal_haus/api/getEmpresas.php')
+    fetch(`${API_BASE_URL}/getEmpresas.php`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -113,7 +206,7 @@ export default function Navbar() {
       .catch(err => console.error("Error al cargar datos de empresa:", err));
 
     // Cargar la lista de animales para el menú de categorías
-    fetch('http://localhost/rjs_animal_haus/api/getAnimales.php')
+    fetch(`${API_BASE_URL}/getAnimales.php`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) setCategoriesList(data);
@@ -134,6 +227,83 @@ export default function Navbar() {
   const [authModalMode, setAuthModalMode] = useState('login');
   
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState('local');
+
+
+  const [gpsLocation, setGpsLocation] = useState(null);
+  const [deliveryInfo, setDeliveryInfo] = useState({ city: null, price: 0 });
+  const [loadingGps, setLoadingGps] = useState(false);
+  const [gpsError, setGpsError] = useState('');
+
+  useEffect(() => {
+    if (!gpsLocation) {
+      setDeliveryInfo({ city: null, price: 0 });
+      return;
+    }
+
+    const fetchCity = async () => {
+      setLoadingGps(true);
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${gpsLocation.lat}&lon=${gpsLocation.lng}`);
+        const data = await res.json();
+        const cityFound = data?.address?.city || data?.address?.town || data?.address?.village || data?.address?.municipality || data?.address?.county;
+        
+        if (cityFound) {
+          const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+          const normalizedCityFound = normalize(cityFound);
+          
+          const matchedCity = deliveryCities.find(c => {
+            const normC = normalize(c.name);
+            return normalizedCityFound.includes(normC) || normC.includes(normalizedCityFound);
+          });
+
+          if (matchedCity) {
+            setDeliveryInfo({ city: matchedCity.name, price: matchedCity.price });
+            setGpsError('');
+          } else {
+            setDeliveryInfo({ city: cityFound, price: 0 });
+            setGpsError(`La ciudad detectada (${cityFound}) no está en nuestra zona de cobertura o el costo debe ser consultado.`);
+          }
+        } else {
+          setDeliveryInfo({ city: null, price: 0 });
+          setGpsError('No pudimos identificar la ciudad desde esa ubicación.');
+        }
+      } catch (err) {
+        console.error("Error al obtener la ciudad:", err);
+      } finally {
+        setLoadingGps(false);
+      }
+    };
+    
+    const timerId = setTimeout(fetchCity, 500);
+    return () => clearTimeout(timerId);
+  }, [gpsLocation]);
+
+  const handleGetLocation = () => {
+    setLoadingGps(true);
+    setGpsError('');
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setGpsLocation({ lat, lng });
+          setLoadingGps(false);
+        },
+        (error) => {
+          console.error(error);
+          setGpsError('No pudimos obtener tu ubicación. Por favor permite el acceso al GPS.');
+          setLoadingGps(false);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    } else {
+      setGpsError('La geolocalización no está soportada en tu navegador.');
+      setLoadingGps(false);
+    }
+  };
 
   const handleOpenAuthModal = (mode = 'login') => {
     setAuthModalMode(mode);
@@ -168,11 +338,30 @@ export default function Navbar() {
     setSearchVal(e.target.value);
   };
 
+  const handleCategoryClick = (cat) => {
+    window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/productos-animales?id=${cat.id}&nombre=${encodeURIComponent(cat.nombre)}`);
+    window.scrollTo(0, 0);
+    window.dispatchEvent(new Event('popstate'));
+    handleCloseCategories();
+    if (mobileOpen) setMobileOpen(false);
+  };
+
   // Drawer para vista móvil
   const drawer = (
     <Box sx={{ textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#ffffff' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box 
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+          onClick={(e) => {
+            e.preventDefault();
+            if (window.location.pathname !== import.meta.env.BASE_URL) {
+              window.history.pushState({}, '', import.meta.env.BASE_URL);
+              window.scrollTo(0, 0);
+              window.dispatchEvent(new Event('popstate'));
+            }
+            if (mobileOpen) setMobileOpen(false);
+          }}
+        >
           <img src={logo} alt="Animal Haus" style={{ height: '35px', objectFit: 'contain' }} />
         </Box>
         <IconButton onClick={handleDrawerToggle}>
@@ -232,7 +421,7 @@ export default function Navbar() {
                       sx={{ gap: 2, '&:hover': { bgcolor: '#f8fafc' } }}
                     >
                       <img 
-                        src={prod.imagen ? `http://localhost/rjs_animal_haus/${prod.imagen}` : 'https://placehold.co/50x50/f1f5f9/94a3b8?text=Sin+Imagen'} 
+                        src={prod.imagen ? `${IMAGE_BASE_URL}${ prod.imagen }` : 'https://placehold.co/50x50/f1f5f9/94a3b8?text=Sin+Imagen'} 
                         alt={prod.nombre} 
                         style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 4 }}
                       />
@@ -255,45 +444,41 @@ export default function Navbar() {
       <Divider sx={{ borderColor: '#f1f5f9' }} />
 
       {/* Lista de categorías móvil */}
-      <List sx={{ flexGrow: 1, overflowY: 'auto' }}>
-        <ListItem disablePadding>
-          <ListItemText
-            primary="Categorías"
-            primaryTypographyProps={{
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              ml: 3,
-              mt: 2,
-              mb: 1,
-              color: '#94a3b8'
-            }}
-          />
-        </ListItem>
-        {categoriesList.map((cat) => (
-          <ListItem key={cat.id} disablePadding>
-            <ListItemButton
-              component="a"
-              href={`#${cat.nombre.toLowerCase().replace(/\s+/g, '-')}`}
-              onClick={handleDrawerToggle}
-              sx={{
-                justifyContent: 'flex-start',
-                pl: 4,
-                color: '#334155',
-                '&:hover': { color: '#d32f2f', bgcolor: '#f8fafc' }
-              }}
-            >
-              <ListItemText
-                primary={cat.nombre}
-                primaryTypographyProps={{
-                  fontWeight: 500,
-                  fontSize: '1rem'
+      <List sx={{ flexGrow: 1, overflowY: 'auto', pt: 2 }}>
+        <Box sx={{ px: 2, pb: 2 }}>
+          {categoriesList.map((cat) => (
+            <ListItem key={cat.id} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={() => handleCategoryClick(cat)}
+                sx={{
+                  borderRadius: '12px',
+                  bgcolor: 'rgba(0,0,0,0.02)',
+                  color: '#1e293b',
+                  border: '1px solid transparent',
+                  transition: 'all 0.2s',
+                  '&:hover': { 
+                    bgcolor: '#fef2f2', 
+                    color: '#dc2626',
+                    borderColor: '#fca5a5',
+                    transform: 'translateX(4px)'
+                  }
                 }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              >
+                <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
+                  {getAnimalIcon(cat.nombre, { size: 22 })}
+                </Box>
+                <ListItemText
+                  primary={cat.nombre}
+                  primaryTypographyProps={{
+                    fontWeight: 600,
+                    fontSize: '0.95rem'
+                  }}
+                />
+                <ChevronRightIcon sx={{ fontSize: '1.2rem', opacity: 0.5 }} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </Box>
       </List>
 
       <Divider sx={{ borderColor: '#f1f5f9' }} />
@@ -323,6 +508,8 @@ export default function Navbar() {
                 localStorage.removeItem('animal_haus_user');
                 setUserData(null);
                 setIsLoggedIn(false);
+                window.history.pushState({}, '', '/');
+                window.dispatchEvent(new PopStateEvent('popstate'));
                 window.dispatchEvent(new Event('authChange'));
               }}
               sx={{ textTransform: 'none', color: '#64748b', fontWeight: 500 }}
@@ -358,12 +545,12 @@ export default function Navbar() {
               sx={{
                 textTransform: 'none',
                 borderRadius: '50px',
-                borderColor: '#d32f2f',
-                color: '#d32f2f',
+                borderColor: '#1e293b',
+                color: '#1e293b',
                 fontWeight: 600,
                 '&:hover': {
-                  backgroundColor: 'rgba(211, 47, 47, 0.08)',
-                  borderColor: '#b71c1c'
+                  backgroundColor: 'rgba(30, 41, 59, 0.08)',
+                  borderColor: '#0f172a'
                 }
               }}
             >
@@ -395,12 +582,22 @@ export default function Navbar() {
               </IconButton>
               <Box
                 component="a"
-                href="/"
+                href={import.meta.env.BASE_URL}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (window.location.pathname !== import.meta.env.BASE_URL) {
+                    window.history.pushState({}, '', import.meta.env.BASE_URL);
+                    window.scrollTo(0, 0);
+                    window.dispatchEvent(new Event('popstate'));
+                  }
+                  if (mobileOpen) setMobileOpen(false);
+                }}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   textDecoration: 'none',
                   transition: 'opacity 0.2s ease',
+                  cursor: 'pointer',
                   '&:hover': { opacity: 0.8 }
                 }}
               >
@@ -477,7 +674,7 @@ export default function Navbar() {
                             sx={{ gap: 2, '&:hover': { bgcolor: '#f8fafc' } }}
                           >
                             <img 
-                              src={prod.imagen ? `http://localhost/rjs_animal_haus/${prod.imagen}` : 'https://placehold.co/50x50/f1f5f9/94a3b8?text=Sin+Imagen'} 
+                              src={prod.imagen ? `${IMAGE_BASE_URL}${ prod.imagen }` : 'https://placehold.co/50x50/f1f5f9/94a3b8?text=Sin+Imagen'} 
                               alt={prod.nombre} 
                               style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 4 }}
                             />
@@ -535,17 +732,40 @@ export default function Navbar() {
                   }
                 }}
               >
-                {categoriesList.map((cat) => (
-                  <MenuItem 
-                    key={cat.id} 
-                    onClick={handleCloseCategories} 
-                    component="a"
-                    href={`#${cat.nombre.toLowerCase().replace(/\s+/g, '-')}`}
-                    sx={{ color: '#475569', py: 1.2, '&:hover': { bgcolor: '#f8fafc', color: '#d32f2f' } }}
-                  >
-                    {cat.nombre}
-                  </MenuItem>
-                ))}
+                <Box sx={{ p: 1 }}>
+                  {categoriesList.map((cat) => (
+                    <MenuItem 
+                      key={cat.id} 
+                      onClick={() => handleCategoryClick(cat)}
+                      sx={{ 
+                        color: '#1e293b', 
+                        py: 1.2, 
+                        px: 2,
+                        mb: 0.5,
+                        borderRadius: '8px',
+                        fontWeight: 500,
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        '&:hover': { 
+                          bgcolor: '#fef2f2', 
+                          color: '#dc2626',
+                          transform: 'translateX(4px)'
+                        }, 
+                        cursor: 'pointer' 
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box sx={{ mr: 1.5, display: 'flex', alignItems: 'center' }}>
+                          {getAnimalIcon(cat.nombre, { size: 18 })}
+                        </Box>
+                        {cat.nombre}
+                      </Box>
+                      <ChevronRightIcon sx={{ fontSize: '1.1rem', opacity: 0.5 }} />
+                    </MenuItem>
+                  ))}
+                </Box>
               </Menu>
             </Box>
           </Box>
@@ -554,10 +774,18 @@ export default function Navbar() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
             {/* Favoritos */}
             <Tooltip title="Favoritos">
-              <IconButton sx={{ color: '#d32f2f', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)' } }}>
+              <IconButton 
+                onClick={() => {
+                  window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/favoritos`);
+                  window.scrollTo(0, 0);
+                  window.dispatchEvent(new Event('popstate'));
+                  if (mobileOpen) setMobileOpen(false);
+                }}
+                sx={{ color: '#d32f2f', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)' } }}
+              >
                 <Badge badgeContent={getFavoriteCount()} sx={{ 
                   '& .MuiBadge-badge': { 
-                    bgcolor: '#ef4444', 
+                    bgcolor: '#1e293b', 
                     color: '#ffffff',
                     fontWeight: 600,
                     minWidth: '18px',
@@ -575,7 +803,7 @@ export default function Navbar() {
               <IconButton onClick={() => setCartDrawerOpen(true)} sx={{ color: '#d32f2f', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)' } }}>
                 <Badge badgeContent={getCartCount()} sx={{ 
                   '& .MuiBadge-badge': { 
-                    bgcolor: '#ff9800', 
+                    bgcolor: '#1e293b', 
                     color: '#ffffff',
                     fontWeight: 600,
                     minWidth: '18px',
@@ -651,7 +879,11 @@ export default function Navbar() {
                       <Typography variant="body2" fontWeight={500}>Mi Cuenta</Typography>
                     </MenuItem>
 
-                    <MenuItem onClick={handleCloseUserMenu} sx={{ py: 1.5, gap: 1.5, color: '#475569', '&:hover': { bgcolor: '#f8fafc', color: '#1e293b' } }}>
+                    <MenuItem onClick={() => {
+                      handleCloseUserMenu();
+                      window.history.pushState({}, '', '/mis-pedidos');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    }} sx={{ py: 1.5, gap: 1.5, color: '#475569', '&:hover': { bgcolor: '#f8fafc', color: '#1e293b' } }}>
                       <ReceiptIcon fontSize="small" />
                       <Typography variant="body2" fontWeight={500}>Mis Pedidos</Typography>
                     </MenuItem>
@@ -663,6 +895,8 @@ export default function Navbar() {
                       localStorage.removeItem('animal_haus_user');
                       setUserData(null);
                       setIsLoggedIn(false);
+                      window.history.pushState({}, '', '/');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
                       window.dispatchEvent(new Event('authChange'));
                     }} sx={{ py: 1.5, gap: 1.5, color: '#64748b', '&:hover': { bgcolor: '#fef2f2', color: '#ef4444' } }}>
                       <LogoutIcon fontSize="small" />
@@ -721,12 +955,22 @@ export default function Navbar() {
         open={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         initialMode={authModalMode}
-        onLoginSuccess={(user) => {
-          localStorage.setItem('animal_haus_user', JSON.stringify(user));
-          setUserData(user);
-          setIsLoggedIn(true);
-          setAuthModalOpen(false);
-          window.dispatchEvent(new Event('authChange'));
+        onLoginSuccess={(user, requirePasswordChange = false) => {
+          if (requirePasswordChange) {
+            setUserData(user); // Temporary storage
+            setAuthModalOpen(false);
+            setChangePasswordOpen(true);
+          } else {
+            localStorage.setItem('animal_haus_user', JSON.stringify(user));
+            setUserData(user);
+            setIsLoggedIn(true);
+            setAuthModalOpen(false);
+            if (String(user.rol) === '1' || String(user.id_rol) === '1') {
+              window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/admin/ventas`);
+              window.dispatchEvent(new Event('popstate'));
+            }
+            window.dispatchEvent(new Event('authChange'));
+          }
         }}
       />
 
@@ -734,6 +978,15 @@ export default function Navbar() {
         open={changePasswordOpen}
         onClose={() => setChangePasswordOpen(false)}
         userData={userData}
+        onPasswordChanged={() => {
+            localStorage.setItem('animal_haus_user', JSON.stringify(userData));
+            setIsLoggedIn(true);
+            if (String(userData.rol) === '1' || String(userData.id_rol) === '1') {
+              window.history.pushState({}, '', `${import.meta.env.BASE_URL.replace(/\/$/, '')}/admin/ventas`);
+              window.dispatchEvent(new Event('popstate'));
+            }
+            window.dispatchEvent(new Event('authChange'));
+        }}
       />
 
       {/* Drawer del Carrito de Compras */}
@@ -769,7 +1022,7 @@ export default function Navbar() {
                 <Box key={item.id} sx={{ display: 'flex', gap: 2, pb: 2, borderBottom: '1px solid #f8fafc' }}>
                   <Box
                     component="img"
-                    src={item.imagen ? `http://localhost/rjs_animal_haus/${item.imagen}` : 'https://placehold.co/100x100/f1f5f9/94a3b8?text=Sin+Imagen'}
+                    src={item.imagen ? `${IMAGE_BASE_URL}${ item.imagen }` : 'https://placehold.co/100x100/f1f5f9/94a3b8?text=Sin+Imagen'}
                     sx={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 2, border: '1px solid #f1f5f9', p: 0.5 }}
                   />
                   <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
@@ -816,8 +1069,7 @@ export default function Navbar() {
                   if (!isLoggedIn) {
                     handleOpenAuthModal('login');
                   } else {
-                    // Aquí iría la lógica de procesar pago o redirigir a WhatsApp
-                    alert('Procesando compra... (En desarrollo)');
+                    setCheckoutModalOpen(true);
                   }
                 }}
                 sx={{
@@ -836,6 +1088,144 @@ export default function Navbar() {
           )}
         </Box>
       </Drawer>
+
+      <Dialog open={checkoutModalOpen} onClose={() => setCheckoutModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, color: '#1e293b' }}>Opciones de Entrega</DialogTitle>
+        <DialogContent dividers>
+          <FormControl component="fieldset" fullWidth>
+            <FormLabel component="legend" sx={{ fontWeight: 600, color: '#475569', mb: 1 }}>¿Cómo deseas recibir tu pedido?</FormLabel>
+            <RadioGroup
+              value={deliveryMethod}
+              onChange={(e) => setDeliveryMethod(e.target.value)}
+            >
+              <FormControlLabel value="local" control={<Radio sx={{ color: '#d32f2f', '&.Mui-checked': { color: '#d32f2f' } }} />} label="Retirar en el local (Gratis)" />
+              <FormControlLabel value="delivery" control={<Radio sx={{ color: '#d32f2f', '&.Mui-checked': { color: '#d32f2f' } }} />} label="Delivery" />
+            </RadioGroup>
+          </FormControl>
+
+          {deliveryMethod === 'delivery' && (
+            <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ p: 2, border: '1px dashed #cbd5e1', borderRadius: 2, bgcolor: '#f8fafc', textAlign: 'center' }}>
+                <Typography variant="body2" sx={{ mb: 2, color: '#475569', fontWeight: 600 }}>Selecciona tu ubicación en el mapa o usa tu ubicación actual</Typography>
+                <Button 
+                  variant="outlined" 
+                  onClick={handleGetLocation} 
+                  disabled={loadingGps}
+                  startIcon={<LocationOnIcon />}
+                  sx={{ borderRadius: '50px', textTransform: 'none', color: '#d32f2f', borderColor: '#d32f2f', mb: 2 }}
+                >
+                  {loadingGps ? 'Obteniendo...' : gpsLocation ? 'Actualizar mi ubicación' : 'Usar mi ubicación actual'}
+                </Button>
+                
+                <Box sx={{ height: 250, width: '100%', borderRadius: 2, overflow: 'hidden', border: '1px solid #cbd5e1' }}>
+                  <MapContainer center={gpsLocation || [-25.28646, -57.64700]} zoom={13} style={{ height: '100%', width: '100%', zIndex: 1 }}>
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; OpenStreetMap contributors'
+                    />
+                    <LocationMarker position={gpsLocation} setPosition={setGpsLocation} />
+                    {gpsLocation && <MapUpdater center={gpsLocation} />}
+                  </MapContainer>
+                </Box>
+                
+                {gpsLocation && (
+                  <Typography variant="caption" display="block" sx={{ mt: 1, color: '#16a34a', fontWeight: 600 }}>
+                    ✓ Ubicación seleccionada
+                  </Typography>
+                )}
+                {gpsError && (
+                  <Typography variant="caption" display="block" sx={{ mt: 1, color: '#dc2626' }}>
+                    {gpsError}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          )}
+
+          <Box sx={{ mt: 3, p: 2, bgcolor: '#f8fafc', borderRadius: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="body2" color="text.secondary">Subtotal:</Typography>
+              <Typography variant="body2" fontWeight={600}>Gs. {getCartTotal().toLocaleString('es-PY')}</Typography>
+            </Box>
+            {deliveryMethod === 'delivery' && deliveryInfo.city && deliveryInfo.price > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">Delivery ({deliveryInfo.city}):</Typography>
+                <Typography variant="body2" fontWeight={600}>
+                  Gs. {deliveryInfo.price.toLocaleString('es-PY')}
+                </Typography>
+              </Box>
+            )}
+            <Divider sx={{ my: 1 }} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="subtitle1" fontWeight={700}>Total a Pagar:</Typography>
+              <Typography variant="subtitle1" fontWeight={800} color="#d32f2f">
+                Gs. {
+                  (
+                    getCartTotal() + 
+                    (deliveryMethod === 'delivery' && deliveryInfo.price > 0 ? deliveryInfo.price : 0)
+                  ).toLocaleString('es-PY')
+                }
+              </Typography>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setCheckoutModalOpen(false)} sx={{ color: '#64748b', textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
+          <Button 
+            variant="contained" 
+            disabled={deliveryMethod === 'delivery' && (!gpsLocation || deliveryInfo.price === 0)}
+            onClick={async () => {
+              try {
+                const res = await fetch(`${API_BASE_URL}/iniciarPagoPagopar.php`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    uuid: userData.uuid,
+                    cartItems: cartItems,
+                    deliveryMethod: deliveryMethod,
+                    deliveryInfo: deliveryInfo
+                  })
+                });
+                
+                const text = await res.text();
+                let data;
+                try {
+                  data = JSON.parse(text);
+                } catch (e) {
+                  console.error("Error parseando JSON:", text);
+                  alert("Error en el servidor. Revise la consola.");
+                  return;
+                }
+
+                if (data.success && data.hash_pedido) {
+                  clearCart();
+                  window.location.href = `https://www.pagopar.com/pagos/${data.hash_pedido}`;
+                } else {
+                  console.error("Pagopar detale:", data.details);
+                  let errorMsg = data.error || 'Error al procesar pago';
+                  if (data.details && data.details.resultado) {
+                      errorMsg += ' - ' + data.details.resultado;
+                  }
+                  alert(errorMsg);
+                }
+              } catch (err) {
+                console.error("Error Pagopar:", err);
+                alert('Error de conexión. Intente nuevamente.');
+              }
+            }}
+            sx={{
+              bgcolor: '#d32f2f',
+              '&:hover': { bgcolor: '#b71c1c' },
+              borderRadius: '50px',
+              px: 3,
+              textTransform: 'none',
+              fontWeight: 600
+            }}
+          >
+            Confirmar Compra
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

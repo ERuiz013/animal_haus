@@ -6,12 +6,15 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import { API_BASE_URL, IMAGE_BASE_URL } from '../config';
+
 
 export default function Productos() {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [unidades, setUnidades] = useState([]);
     const [animales, setAnimales] = useState([]);
+    const [impuestos, setImpuestos] = useState([]);
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -37,33 +40,37 @@ export default function Productos() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [prodRes, catRes, uniRes, animalRes] = await Promise.all([
-                fetch('http://localhost/rjs_animal_haus/api/getProductos.php'),
-                fetch('http://localhost/rjs_animal_haus/api/getCategorias.php'),
-                fetch('http://localhost/rjs_animal_haus/api/getUnidadesMedidas.php'),
-                fetch('http://localhost/rjs_animal_haus/api/getAnimales.php')
+            const [prodRes, catRes, uniRes, animalRes, impRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/getProductos.php`),
+                fetch(`${API_BASE_URL}/getCategorias.php`),
+                fetch(`${API_BASE_URL}/getUnidadesMedidas.php`),
+                fetch(`${API_BASE_URL}/getAnimales.php`),
+                fetch(`${API_BASE_URL}/getImpuestos.php`)
             ]);
 
-            if (!prodRes.ok || !catRes.ok || !uniRes.ok || !animalRes.ok) {
+            if (!prodRes.ok || !catRes.ok || !uniRes.ok || !animalRes.ok || !impRes.ok) {
                 throw new Error('Error al cargar los datos');
             }
 
-            const [prodData, catData, uniData, animalData] = await Promise.all([
+            const [prodData, catData, uniData, animalData, impData] = await Promise.all([
                 prodRes.json(),
                 catRes.json(),
                 uniRes.json(),
-                animalRes.json()
+                animalRes.json(),
+                impRes.json()
             ]);
 
             if (prodData.error) throw new Error(prodData.error);
             if (catData.error) throw new Error(catData.error);
             if (uniData.error) throw new Error(uniData.error);
             if (animalData.error) throw new Error(animalData.error);
+            if (impData.error) throw new Error(impData.error);
 
             setProductos(prodData);
             setCategorias(catData);
             setUnidades(uniData);
             setAnimales(animalData);
+            setImpuestos(impData);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -72,7 +79,7 @@ export default function Productos() {
     };
 
     const fetchProductos = () => {
-        fetch('http://localhost/rjs_animal_haus/api/getProductos.php')
+        fetch(`${API_BASE_URL}/getProductos.php`)
             .then(res => res.json())
             .then(data => {
                 if (!data.error) setProductos(data);
@@ -125,6 +132,7 @@ export default function Productos() {
             categoria_id: '', 
             animal_id: '',
             uni_med_id: '', 
+            impuesto_id: '',
             sku: '', 
             nombre: '', 
             precio: '', 
@@ -191,8 +199,8 @@ export default function Productos() {
         setSaving(true);
         const isNew = !selectedProducto.id;
         const endpoint = isNew 
-            ? 'http://localhost/rjs_animal_haus/api/createProducto.php' 
-            : 'http://localhost/rjs_animal_haus/api/updateProducto.php';
+            ? `${API_BASE_URL}/createProducto.php` 
+            : `${API_BASE_URL}/updateProducto.php`;
 
         const formData = new FormData();
         if (!isNew) formData.append('id', selectedProducto.id);
@@ -200,6 +208,7 @@ export default function Productos() {
         formData.append('categoria_id', selectedProducto.categoria_id);
         formData.append('animal_id', selectedProducto.animal_id || '');
         formData.append('uni_med_id', selectedProducto.uni_med_id);
+        formData.append('impuesto_id', selectedProducto.impuesto_id || '');
         formData.append('sku', selectedProducto.sku);
         formData.append('nombre', selectedProducto.nombre);
         formData.append('precio', selectedProducto.precio);
@@ -238,7 +247,7 @@ export default function Productos() {
 
     const handleConfirmAnular = () => {
         setSaving(true);
-        fetch('http://localhost/rjs_animal_haus/api/anularProducto.php', {
+        fetch(`${API_BASE_URL}/anularProducto.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -311,7 +320,7 @@ export default function Productos() {
                                 }}
                                 sx={{ backgroundColor: '#ffffff', borderRadius: 1, minWidth: '250px' }}
                             />
-                            <Button 
+                            <Button size="small" 
                                 variant="contained" 
                                 startIcon={<AddIcon />}
                                 onClick={handleAddClick}
@@ -326,8 +335,8 @@ export default function Productos() {
                     ) : error ? (
                         <Alert severity="error">{error}</Alert>
                     ) : (
-                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflow: 'hidden' }}>
-                            <Table>
+                        <TableContainer sx={{ border: '1px solid #edf2f7', borderRadius: 3, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                                     <TableRow>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Imagen</TableCell>
@@ -335,14 +344,13 @@ export default function Productos() {
                                         <TableCell align="left" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Producto</TableCell>
                                         <TableCell align="left" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Categoría</TableCell>
                                         <TableCell align="right" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Precio</TableCell>
-                                        <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Stock</TableCell>
                                         <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', py: 2 }}>Acciones</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {filteredProductos.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>No hay productos disponibles.</TableCell>
+                                            <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>No hay productos disponibles.</TableCell>
                                         </TableRow>
                                     ) : (
                                         filteredProductos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((prod) => (
@@ -355,7 +363,7 @@ export default function Productos() {
                                                     {prod.imagen ? (
                                                         <Box 
                                                             component="img" 
-                                                            src={`http://localhost/rjs_animal_haus/${prod.imagen}`} 
+                                                            src={`${IMAGE_BASE_URL}${ prod.imagen }`} 
                                                             alt={prod.nombre}
                                                             sx={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 2, border: '1px solid #edf2f7' }}
                                                         />
@@ -384,14 +392,6 @@ export default function Productos() {
                                                 </TableCell>
                                                 <TableCell align="right" sx={{ fontWeight: 700, color: '#10b981' }}>
                                                     Gs. {Number(prod.precio).toLocaleString('es-PY')}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <Chip 
-                                                        label={prod.stock} 
-                                                        size="small" 
-                                                        color={prod.stock > 10 ? "success" : prod.stock > 0 ? "warning" : "error"} 
-                                                        sx={{ fontWeight: 600 }} 
-                                                    />
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <Tooltip title="Editar producto">
@@ -432,7 +432,7 @@ export default function Productos() {
                 maxWidth="md"
                 PaperProps={{ sx: { borderRadius: 3, boxShadow: 24 } }}
             >
-                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 800, backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 3 }}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#1e293b', fontWeight: 700, fontSize: '1.1rem', backgroundColor: '#f8fafc', borderBottom: '1px solid #edf2f7', p: 2 }}>
                     {selectedProducto?.id ? <EditIcon sx={{ color: '#c4a484' }} /> : <AddIcon sx={{ color: '#c4a484' }} />}
                     {selectedProducto?.id ? 'Editar Producto' : 'Nuevo Producto'}
                 </DialogTitle>
@@ -445,7 +445,7 @@ export default function Productos() {
                                 {selectedProducto.imagenPreview || selectedProducto.imagen ? (
                                     <Box 
                                         component="img" 
-                                        src={selectedProducto.imagenPreview ? selectedProducto.imagenPreview : `http://localhost/rjs_animal_haus/${selectedProducto.imagen}`} 
+                                        src={selectedProducto.imagenPreview ? selectedProducto.imagenPreview : `${IMAGE_BASE_URL}${ selectedProducto.imagen }`} 
                                         alt="Preview"
                                         sx={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 3, border: '1px solid #e2e8f0', boxShadow: 1 }}
                                     />
@@ -454,7 +454,7 @@ export default function Productos() {
                                         <InventoryIcon sx={{ fontSize: 40, color: '#94a3b8' }} />
                                     </Box>
                                 )}
-                                <Button
+                                <Button size="small"
                                     variant="outlined"
                                     component="label"
                                     startIcon={<CloudUploadIcon />}
@@ -471,7 +471,7 @@ export default function Productos() {
                                 </Button>
                             </Box>
 
-                            <TextField
+                            <TextField size="small"
                                 label="Nombre del Producto"
                                 name="nombre"
                                 value={selectedProducto.nombre || ''}
@@ -483,7 +483,7 @@ export default function Productos() {
                                 sx={{ gridColumn: { xs: '1fr', sm: 'span 2' } }}
                             />
 
-                            <TextField
+                            <TextField size="small"
                                 label="SKU (Código)"
                                 name="sku"
                                 value={selectedProducto.sku || ''}
@@ -504,9 +504,9 @@ export default function Productos() {
                                 }}
                             />
 
-                            <FormControl fullWidth disabled={saving} variant="outlined">
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
                                 <InputLabel id="categoria-label">Categoría</InputLabel>
-                                <Select
+                                <Select size="small"
                                     labelId="categoria-label"
                                     name="categoria_id"
                                     value={selectedProducto.categoria_id || ''}
@@ -524,9 +524,9 @@ export default function Productos() {
                                 </Select>
                             </FormControl>
 
-                            <FormControl fullWidth disabled={saving} variant="outlined">
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
                                 <InputLabel id="animal-label">Tipo de Animal</InputLabel>
-                                <Select
+                                <Select size="small"
                                     labelId="animal-label"
                                     name="animal_id"
                                     value={selectedProducto.animal_id || ''}
@@ -544,9 +544,9 @@ export default function Productos() {
                                 </Select>
                             </FormControl>
 
-                            <FormControl fullWidth disabled={saving} variant="outlined">
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
                                 <InputLabel id="unidad-label">Unidad de Medida</InputLabel>
-                                <Select
+                                <Select size="small"
                                     labelId="unidad-label"
                                     name="uni_med_id"
                                     value={selectedProducto.uni_med_id || ''}
@@ -564,7 +564,27 @@ export default function Productos() {
                                 </Select>
                             </FormControl>
 
-                            <TextField
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
+                                <InputLabel id="impuesto-label">Impuesto</InputLabel>
+                                <Select size="small"
+                                    labelId="impuesto-label"
+                                    name="impuesto_id"
+                                    value={selectedProducto.impuesto_id || ''}
+                                    label="Impuesto"
+                                    onChange={handleInputChange}
+                                >
+                                    <MenuItem value="">
+                                        <em>-- Seleccione Impuesto --</em>
+                                    </MenuItem>
+                                    {impuestos.map(i => (
+                                        <MenuItem key={i.id} value={i.id}>
+                                            {i.descripcion}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            <TextField size="small"
                                 label="Precio"
                                 name="precio"
                                 type="number"
@@ -575,9 +595,9 @@ export default function Productos() {
                                 variant="outlined"
                             />
 
-                            <FormControl fullWidth disabled={saving} variant="outlined">
+                            <FormControl size="small" fullWidth disabled={saving} variant="outlined">
                                 <InputLabel id="tipo-precio-label">Tipo de Precio</InputLabel>
-                                <Select
+                                <Select size="small"
                                     labelId="tipo-precio-label"
                                     name="tipo_precio"
                                     value={selectedProducto.tipo_precio || 'Normal'}
@@ -590,18 +610,8 @@ export default function Productos() {
                                 </Select>
                             </FormControl>
 
-                            <TextField
-                                label="Stock"
-                                name="stock"
-                                type="number"
-                                value={selectedProducto.stock || ''}
-                                onChange={handleInputChange}
-                                fullWidth
-                                disabled={saving}
-                                variant="outlined"
-                            />
 
-                            <TextField
+                            <TextField size="small"
                                 label="Detalle / Descripción"
                                 name="detalle"
                                 value={selectedProducto.detalle || ''}
@@ -619,7 +629,7 @@ export default function Productos() {
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: selectedProducto?.id ? 'space-between' : 'flex-end', px: 4, py: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #edf2f7' }}>
                     {selectedProducto?.id && (
-                        <Button 
+                        <Button size="small" 
                             onClick={handleAnularClick} 
                             color="error" 
                             variant="text" 
@@ -627,14 +637,14 @@ export default function Productos() {
                             startIcon={<DeleteIcon />}
                             sx={{ fontWeight: 600, textTransform: 'none' }}
                         >
-                            Eliminar
+                            Anular
                         </Button>
                     )}
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
+                        <Button size="small" onClick={handleModalClose} disabled={saving} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>
                             Cancelar
                         </Button>
-                        <Button 
+                        <Button size="small" 
                             onClick={handleSave} 
                             variant="contained" 
                             disabled={saving}
@@ -654,20 +664,20 @@ export default function Productos() {
             >
                 <DialogTitle sx={{ fontWeight: 'bold', color: '#dc2626', display: 'flex', alignItems: 'center', gap: 1 }}>
                     <DeleteIcon />
-                    Confirmar Eliminación
+                    Confirmar Anulación
                 </DialogTitle>
                 <DialogContent>
                     <Typography sx={{ mt: 1, color: '#475569' }}>
-                        ¿Estás seguro de que deseas eliminar permanentemente el producto <strong>{selectedProducto?.nombre}</strong>? 
-                        Esta acción no se puede deshacer.
+                        ¿Estás seguro de que deseas anular el producto <strong>{selectedProducto?.nombre}</strong>? 
+                        Esta acción cambiará su estado a inactivo.
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
+                    <Button size="small" onClick={() => setConfirmAnularOpen(false)} color="inherit" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600 }}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
-                        {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, eliminar'}
+                    <Button size="small" onClick={handleConfirmAnular} color="error" variant="contained" disabled={saving} sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}>
+                        {saving ? <CircularProgress size={24} color="inherit" /> : 'Sí, anular'}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -686,3 +696,6 @@ export default function Productos() {
         </Box>
     );
 }
+
+
+
