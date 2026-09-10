@@ -44,6 +44,12 @@ $stmtTal->execute();
 $talonario = $stmtTal->fetch();
 $talonario_id = $talonario ? $talonario['id'] : 1; // Fallback a 1 si no hay
 
+// 2.5 Fetch Empresa data for Pagopar
+$stmtEmp = $pdo->query("SELECT * FROM empresa LIMIT 1");
+$empresaData = $stmtEmp->fetch(PDO::FETCH_ASSOC);
+$vendedor_direccion = ($empresaData && !empty($empresaData['direcion'])) ? $empresaData['direcion'] : "";
+$vendedor_telefono = ($empresaData && !empty($empresaData['telefono'])) ? $empresaData['telefono'] : "";
+
 // 3. Calculate Totals & Pagopar Details
 $total = 0;
 $total_exenta = 0;
@@ -62,7 +68,16 @@ foreach ($cartItems as $item) {
         "id_producto" => $item['id'],
         "cantidad" => $item['quantity'],
         "nombre" => mb_substr($item['nombre'], 0, 100), // max 100 chars
-        "precio_total" => $subtotal
+        "precio_total" => $subtotal,
+        "ciudad" => "1",
+        "categoria" => "909",
+        "public_key" => PAGOPAR_PUBLIC_TOKEN,
+        "vendedor_direccion" => $vendedor_direccion,
+        "vendedor_telefono" => $vendedor_telefono,
+        "vendedor_direccion_referencia" => "",
+        "vendedor_direccion_coordenadas" => "",
+        "url_imagen" => "",
+        "descripcion" => mb_substr($item['nombre'], 0, 200)
     ];
 }
 
@@ -76,7 +91,16 @@ if ($deliveryMethod === 'delivery' && $deliveryPrice > 0) {
         "id_producto" => 9999, // ID generico para el envio
         "cantidad" => 1,
         "nombre" => "Servicio de Delivery - " . mb_substr($deliveryCity, 0, 50),
-        "precio_total" => $deliveryPrice
+        "precio_total" => $deliveryPrice,
+        "ciudad" => "1",
+        "categoria" => "909",
+        "public_key" => PAGOPAR_PUBLIC_TOKEN,
+        "vendedor_direccion" => $vendedor_direccion,
+        "vendedor_telefono" => $vendedor_telefono,
+        "vendedor_direccion_referencia" => "",
+        "vendedor_direccion_coordenadas" => "",
+        "url_imagen" => "",
+        "descripcion" => "Servicio de Delivery - " . mb_substr($deliveryCity, 0, 50)
     ];
 }
 
@@ -141,8 +165,11 @@ $hash_pedido = sha1($hash_string);
 
 $fecha_maxima_pago = date('Y-m-d H:i:s', strtotime('+20 minutes'));
 
-$documento = !empty($user['documento']) ? $user['documento'] : "9999999";
-$telefono = !empty($user['telefono']) ? $user['telefono'] : "0900000000";
+$documento = !empty($user['documento']) ? $user['documento'] : "";
+$telefono = !empty($user['telefono']) ? $user['telefono'] : "";
+if ($telefono !== "" && strpos($telefono, '0') === 0) {
+    $telefono = '+595' . substr($telefono, 1);
+}
 
 $payload = [
     "token" => $hash_pedido,
@@ -155,11 +182,12 @@ $payload = [
         "ciudad" => 1, // 1 es Asuncion, requerido por pagopar
         "nombre" => trim($user['nombre'] . ' ' . $user['apellido']),
         "telefono" => $telefono,
-        "direccion" => empty($deliveryCity) ? "Sin dirección" : $deliveryCity,
+        "direccion" => empty($deliveryCity) ? "" : $deliveryCity,
+        "direccion_referencia" => "",
         "documento" => $documento,
         "coordenadas" => "",
         "razon_social" => trim($user['nombre'] . ' ' . $user['apellido']),
-        "tipo_documento" => (strpos($documento, '-') !== false) ? "RUC" : "CI"
+        "tipo_documento" => "CI"
     ],
     "compras_items" => $detallesPagopar,
     "fecha_maxima_pago" => $fecha_maxima_pago,
